@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc5f6e1a93c289841b55efe8bbbf2fbf, type: 3}
+  m_Name: DungeonNodesSO
+  m_EditorClassIdentifier: 
+  Nodes:
+    CenterNodesList:
+    - NodeGameobject: {fileID: 367895415341021566, guid: c8602fd2c5a94724ea4d67e3accd7a7d, type: 3}
+    UpNodesList:
+    - NodeGameobject: {fileID: 8529859219810712036, guid: 4de65a85bc1ea4e439599de18e342cd1, type: 3}
+    - NodeGameobject: {fileID: 3208333088920475083, guid: 768fccbd77ef6d8459d395f4ade23543, type: 3}
+    - NodeGameobject: {fileID: 1080563169209940646, guid: ce1122c670c611c40bc5dd1cbabf8741, type: 3}
+    DownNodesList:
+    - NodeGameobject: {fileID: 8529859219810712036, guid: 50d72f8e12f508948a72ad6265a5d8ce, type: 3}
+    - NodeGameobject: {fileID: 3208333088920475083, guid: d117952f064a8ba43ad35541fc4d7aa6, type: 3}
+    - NodeGameobject: {fileID: 1080563169209940646, guid: 8b5213b715b95d04cbd9ce46ad641829, type: 3}
+    RightNodesList:
+    - NodeGameobject: {fileID: 8529859219810712036, guid: 6c63ae5e89772114c894d9cfd705e67a, type: 3}
+    - NodeGameobject: {fileID: 3208333088920475083, guid: b66d69e0d6d56834587104dea0e99ef6, type: 3}
+    - NodeGameobject: {fileID: 1080563169209940646, guid: 7de9d53ef9a39b144ac0bced5fc01498, type: 3}
+    LeftNodesList:
+    - NodeGameobject: {fileID: 8529859219810712036, guid: b92dbb070be1335418abab4e7afe2286, type: 3}
+    - NodeGameobject: {fileID: 3208333088920475083, guid: 6f6d2a4acd101cf4690f5589f600e39b, type: 3}
+    - NodeGameobject: {fileID: 1080563169209940646, guid: 42ba164004aa0054c996dc9a0ca8555a, type: 3}
