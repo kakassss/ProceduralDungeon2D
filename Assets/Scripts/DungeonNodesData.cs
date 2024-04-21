@@ -5,5 +5,12 @@ using UnityEngine;
 
 public class DungeonNodesData : MonoBehaviour
 {
-    [SerializeField] private DungeonNodesSo _dungeonNodeData;
+    public static DungeonNodesData Instance;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    public DungeonNodesSo _dungeonNodeData;
 }

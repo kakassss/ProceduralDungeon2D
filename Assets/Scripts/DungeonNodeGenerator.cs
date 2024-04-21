@@ -51,21 +51,31 @@ public class DungeonNodeGenerator : MonoBehaviour
     
     private void CreateDungeon()
     {
-        NodeData<UpNodes> aa = new NodeData<UpNodes>(new UpNodes(),0,0);
-        
-        Debug.Log("aa.node.Direction " + aa.node.Direction);
-        
+        //EN SON YAPMAYA CALISTIGIN SEY
+        /*
+         *  Aşağıdaki GetRandomNode fonksiyonundan
+         * rastgele bir node çekmek istiyorsun fakat, çekilen rastgele
+         * node'un içindeki gameobje newlendiği için null oluyor.
+         * 5 farklı node var, belli bi for içinde her seferinde şu şu diyip GO atanmayacagını düşünüyorsun
+         * bu yüzden atamadan otomatik olarak kendi içlerinde bir şekilde referanslanmaları gerekiyor.
+         *
+         * bunla ilgili bi şey denerken DungeonNodesSO scriptindeki
+         *
+         * Node 2 ve CenterNodes2 classlarını oluşturdun.
+         * Onlardan da pek bir şey çıkmayacak gibi düşünmeye başlamıstın
+         */
+        NodeData<CenterNodes> _initNode = new NodeData<CenterNodes>(new CenterNodes(),NodePoint.x,NodePoint.y);
         dungeonNodePosList.Add(NodePoint);
-        var nextNodePos = NodePoint;
-        Instantiate(visualNode, new Vector3(nextNodePos.x,nextNodePos.y,0),Quaternion.identity);
+        var nextNodePos = _initNode;
+        Instantiate(_initNode.node.NodeGameobject, new Vector3(_initNode.PosX,_initNode.PosY,0),Quaternion.identity);
         
         
-        for (int i = 0; i < iterationCount; i++)
-        {
-            nextNodePos += GetRandomDirection();
-            dungeonNodePosList.Add(nextNodePos);
-            Instantiate(visualNode, new Vector3(nextNodePos.x,nextNodePos.y,0),Quaternion.identity);
-        }
+        // for (int i = 0; i < iterationCount; i++)
+        // {
+        //     nextNodePos.Position += GetRandomDirection();
+        //     dungeonNodePosList.Add(nextNodePos.Position);
+        //     Instantiate(visualNode, new Vector3(nextNodePos.PosX,nextNodePos.PosY,0),Quaternion.identity);
+        // }
     }
 
     private Node[] randomNodes = new Node[4];
@@ -114,6 +124,8 @@ public class NodeData<T> where T : Node
     public T node;
     public int PosX;
     public int PosY;
+
+    public Vector2Int Position;
     
     
     public NodeData(T node, int posX, int posY)
@@ -121,6 +133,8 @@ public class NodeData<T> where T : Node
         this.node = node;
         PosX = posX;
         PosY = posY;
+        Position = new Vector2Int(PosX, PosY);
+
     }
 }
 

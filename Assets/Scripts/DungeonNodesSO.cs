@@ -7,11 +7,40 @@ using UnityEngine;
 public class DungeonNodesSo : ScriptableObject
 {
     public Nodes Nodes;
+    
+}
+
+public class Node2
+{
+    [HideInInspector] public Vector2Int Direction = new Vector2Int(0,0);
+    public GameObject NodeGameobject;
+    
+    [HideInInspector] public int PosX;
+    [HideInInspector] public int PosY;
+
+    [HideInInspector] public Vector2Int Position;
+
+
+    protected Node2(int posX, int posY)
+    {
+        PosX = posX;
+        PosY = posY;
+        Position = new Vector2Int(PosX, PosY);
+    }
+}
+
+[Serializable]
+public class CenterNodes2 : Node2
+{
+    public CenterNodes2(int posX, int posY) : base(posX, posY)
+    {
+        Direction = new Vector2Int(0, 0); 
+    }
 }
 
 public class Node
 {
-    public Vector2Int Direction = new Vector2Int(0,0);
+    [HideInInspector] public Vector2Int Direction = new Vector2Int(0,0);
     public GameObject NodeGameobject;
 }
 
@@ -34,6 +63,7 @@ public class Node
 [Serializable]
 public class Nodes
 {
+    public List<CenterNodes2> CenterNodes2;
     public List<CenterNodes> CenterNodesList;
     public List<UpNodes> UpNodesList;
     public List<DownNodes> DownNodesList;
