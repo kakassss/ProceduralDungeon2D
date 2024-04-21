@@ -11,17 +11,16 @@ public class DungeonNodesSo : ScriptableObject
 
 public class Node
 {
-    public readonly Vector2Int Direction = new Vector2Int(0,0);
+    public Vector2Int Direction = new Vector2Int(0,0);
     public GameObject NodeGameobject;
 }
 
-
 //Rooms
-[Serializable] public class CenterNodes : Node { }
-[Serializable] public class UpNodes : Node { public readonly Vector2Int Direction = new Vector2Int(0,1); }
-[Serializable] public class DownNodes : Node { public readonly Vector2Int Direction = new Vector2Int(0,-1); }
-[Serializable] public class RightNodes : Node { public readonly Vector2Int Direction = new Vector2Int(1,0); }
-[Serializable] public class LeftNodes : Node { public readonly Vector2Int Direction = new Vector2Int(-1,0); }
+[Serializable] public class CenterNodes : Node { public CenterNodes() { Direction = new Vector2Int(0, 0); }}
+[Serializable] public class UpNodes : Node { public UpNodes() { Direction = new Vector2Int(0, 1); } }
+[Serializable] public class DownNodes : Node { public DownNodes() { Direction = new Vector2Int(0,-1); } }
+[Serializable] public class RightNodes : Node { public RightNodes() { Direction = new Vector2Int(1,0); } }
+[Serializable] public class LeftNodes : Node { public LeftNodes() { Direction = new Vector2Int(-1,0); } }
 
 //Corriodors
 [Serializable] public class UpDownNodes : Node { public readonly Vector2Int Direction = new Vector2Int(-1,0); }

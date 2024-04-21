@@ -15,29 +15,29 @@ public class DungeonNodeGenerator : MonoBehaviour
 
     
     public Grid gridData;
-    private List<NodeData> _nodeDatas;
+    //private List<NodeData> _nodeDatas;
 
     private void Awake()
     {
         //10X10
         gridData = new Grid();
-        _nodeDatas = new List<NodeData>();
+        //_nodeDatas = new List<NodeData>();
         gridData.Grids = new int[Width, Height];
 
 
-        for (int i = 0; i < Width; i++)
-        {
-            for (int j = 0; j < Height; j++)
-            {
-                NodeData newNode = new NodeData(i, j);
-                _nodeDatas.Add(newNode);
-            }
-        }
-
-        foreach (var nodeData in _nodeDatas)
-        {
-            nodeData.WritePosition();
-        }
+        // for (int i = 0; i < Width; i++)
+        // {
+        //     for (int j = 0; j < Height; j++)
+        //     {
+        //         NodeData newNode = new NodeData(i, j);
+        //         _nodeDatas.Add(newNode);
+        //     }
+        // }
+        //
+        // foreach (var nodeData in _nodeDatas)
+        // {
+        //     nodeData.WritePosition();
+        // }
         
         CreateDungeon();
     }
@@ -51,6 +51,10 @@ public class DungeonNodeGenerator : MonoBehaviour
     
     private void CreateDungeon()
     {
+        NodeData<UpNodes> aa = new NodeData<UpNodes>(new UpNodes(),0,0);
+        
+        Debug.Log("aa.node.Direction " + aa.node.Direction);
+        
         dungeonNodePosList.Add(NodePoint);
         var nextNodePos = NodePoint;
         Instantiate(visualNode, new Vector3(nextNodePos.x,nextNodePos.y,0),Quaternion.identity);
@@ -62,9 +66,22 @@ public class DungeonNodeGenerator : MonoBehaviour
             dungeonNodePosList.Add(nextNodePos);
             Instantiate(visualNode, new Vector3(nextNodePos.x,nextNodePos.y,0),Quaternion.identity);
         }
-        
-        
     }
+
+    private Node[] randomNodes = new Node[4];
+
+    private Node GetRandomNode()
+    {
+        randomNodes[0] = new UpNodes();
+        randomNodes[1] = new DownNodes();
+        randomNodes[2] = new LeftNodes();
+        randomNodes[3] = new RightNodes();
+
+
+        return randomNodes[Random.Range(0, randomNodes.Length)];
+    }
+    
+    
     
     private Vector2Int UpDirection = Vector2Int.up;
     private Vector2Int DownDirection = Vector2Int.down;
@@ -90,6 +107,21 @@ public class DungeonNodeGenerator : MonoBehaviour
 public class Grid
 {
     public int[,] Grids;
+}
+
+public class NodeData<T> where T : Node
+{
+    public T node;
+    public int PosX;
+    public int PosY;
+    
+    
+    public NodeData(T node, int posX, int posY)
+    {
+        this.node = node;
+        PosX = posX;
+        PosY = posY;
+    }
 }
 
 public class NodeData
