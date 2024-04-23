@@ -72,7 +72,17 @@ public class DungeonNodeGenerator : MonoBehaviour
         //     dungeonNodePosList.Add(nextNodePos.Position);
         //     Instantiate(visualNode, new Vector3(nextNodePos.PosX,nextNodePos.PosY,0),Quaternion.identity);
         // }
-
+        
+        /*
+         * En son node dataları için yeni bir direction datası oluşturdun.
+         * bu data ile -1 0 1 gibi sayılarla uğrasmak yerine x için ve y için 2 tane ayrı vector oluşturdun.
+         * şuan oluşturulan node'un sağ solunu ve yukarı aşağısının dolu olup olmadıgını test eden basit bir
+         * if else döngüsü kurdun.
+         * 
+         * Yeni oluşturulan data ile bi sorun çıkmadı gibi gözüküyor.
+         * Şuan kalan, for içinde nereye gideceğini seçen basit
+         * bir producedural mantık kaldı gibi gözüküyor.
+         */
         
         
         // NodeData: 0 is open, 1 is close
