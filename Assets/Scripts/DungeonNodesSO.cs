@@ -11,19 +11,75 @@ public class DungeonNodesSo : ScriptableObject
 public class Node
 {
     public GameObject NodeGameobject;
-    protected Vector2Int Direction = new Vector2Int(0,0);
-    public Vector2Int GetDirection()
-    {
-        return Direction;
-    }
+    public Directions Direction;
+    //protected Vector2Int Direction = new Vector2Int(0,0);
+    // public Vector2Int GetDirection()
+    // {
+    //     return Direction;
+    // }
+}
+
+public struct Directions
+{
+    public Vector2Int DirectionX;
+    public Vector2Int DirectionY;
 }
 
 //Rooms
-[Serializable] public class CenterNodes : Node { public CenterNodes() { Direction = new Vector2Int(0, 0); }}
-[Serializable] public class UpNodes : Node { public UpNodes() { Direction = new Vector2Int(0, 1); } }
-[Serializable] public class DownNodes : Node { public DownNodes() { Direction = new Vector2Int(0,-1); } }
-[Serializable] public class RightNodes : Node { public RightNodes() { Direction = new Vector2Int(1,0); } }
-[Serializable] public class LeftNodes : Node { public LeftNodes() { Direction = new Vector2Int(-1,0); } }
+[Serializable] public class CenterNodes : Node 
+{
+    public CenterNodes() 
+    {
+        Direction.DirectionX = new Vector2Int(0, 0);
+        Direction.DirectionY = new Vector2Int(0, 0); 
+    } 
+}
+
+[Serializable]
+public class UpNodes : Node
+{
+    public UpNodes()
+    {
+        Direction.DirectionX = new Vector2Int(1, 1);
+        Direction.DirectionY = new Vector2Int(0, 1);
+    }
+}
+
+[Serializable]
+public class DownNodes : Node
+{
+    public DownNodes()
+    {
+        Direction.DirectionX = new Vector2Int(1, 1);
+        Direction.DirectionY = new Vector2Int(1, 0);
+    }
+}
+
+[Serializable]
+public class RightNodes : Node
+{
+    public RightNodes()
+    {
+        Direction.DirectionX = new Vector2Int(1, 0);
+        Direction.DirectionY = new Vector2Int(1, 1);
+    }
+}
+
+[Serializable]
+public class LeftNodes : Node
+{
+    public LeftNodes()
+    {
+        Direction.DirectionX = new Vector2Int(0, 1);
+        Direction.DirectionY = new Vector2Int(1, 0);
+    }
+}
+
+//Old data type
+// [Serializable] public class UpNodes : Node { public UpNodes() { Direction = new Vector2Int(0, 1); } }
+// [Serializable] public class DownNodes : Node { public DownNodes() { Direction = new Vector2Int(0,-1); } }
+// [Serializable] public class RightNodes : Node { public RightNodes() { Direction = new Vector2Int(1,0); } }
+// [Serializable] public class LeftNodes : Node { public LeftNodes() { Direction = new Vector2Int(-1,0); } }
 
 //Corridors
 [Serializable] public class UpDownNodes : Node { public readonly Vector2Int Direction = new Vector2Int(-1,0); }

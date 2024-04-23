@@ -52,26 +52,18 @@ public class DungeonNodeGenerator : MonoBehaviour
     
     private void CreateDungeon()
     {
-        //EN SON YAPMAYA CALISTIGIN SEY
-        /*
-         *  Aşağıdaki GetRandomNode fonksiyonundan
-         * rastgele bir node çekmek istiyorsun fakat, çekilen rastgele
-         * node'un içindeki gameobje newlendiği için null oluyor.
-         * 5 farklı node var, belli bi for içinde her seferinde şu şu diyip GO atanmayacagını düşünüyorsun
-         * bu yüzden atamadan otomatik olarak kendi içlerinde bir şekilde referanslanmaları gerekiyor.
-         *
-         * bunla ilgili bi şey denerken DungeonNodesSO scriptindeki
-         *
-         * Node 2 ve CenterNodes2 classlarını oluşturdun.
-         * Onlardan da pek bir şey çıkmayacak gibi düşünmeye başlamıstın
-         */
         NodeData<CenterNodes> _initNode = new NodeData<CenterNodes>(new CenterNodes(),NodePoint.x,NodePoint.y);
         _initNode.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(_initNode.node);
+
+        var nodePos = _initNode.Position;
+        var nodeGo = _initNode.node.NodeGameobject;
         
+        Debug.Log("CenterNode Y" + _initNode.node.Direction.DirectionY);
+        Debug.Log("CenterNode X" + _initNode.node.Direction.DirectionX);
         
         dungeonNodePosList.Add(NodePoint);
         var nextNodePos = _initNode;
-        Instantiate(_initNode.node.NodeGameobject, new Vector3(_initNode.PosX,_initNode.PosY,0),Quaternion.identity);
+        Instantiate(nodeGo, new Vector3(_initNode.PosX,_initNode.PosY,0),Quaternion.identity);
         
         
         // for (int i = 0; i < iterationCount; i++)
@@ -80,6 +72,51 @@ public class DungeonNodeGenerator : MonoBehaviour
         //     dungeonNodePosList.Add(nextNodePos.Position);
         //     Instantiate(visualNode, new Vector3(nextNodePos.PosX,nextNodePos.PosY,0),Quaternion.identity);
         // }
+
+        
+        
+        // NodeData: 0 is open, 1 is close
+        void CheckOpenPositions(Node node)
+        {
+            var currentNode = node.Direction;
+            
+            //Check Left and Right possibilities
+            if (currentNode.DirectionX == Vector2Int.zero)
+            {
+                //Left And Right node area is open
+            }
+            else
+            {
+                if (currentNode.DirectionX == new Vector2Int(0, 1))
+                {
+                    //Left node area is open
+                }
+                else if (currentNode.DirectionX == new Vector2Int(1, 0))
+                {
+                    //Right node area is open
+                }
+            }
+           
+            //Check Up and Down possibilities
+            if (currentNode.DirectionY == Vector2Int.zero)
+            {
+                //Up and Down node area is open
+            }
+            else
+            {
+                if (currentNode.DirectionY == new Vector2Int(0, 1))
+                {
+                    //Up node area is open, down closed
+                }
+                else if (currentNode.DirectionY == new Vector2Int(1, 0))
+                {
+                    //Down node area is open, up closed
+                }
+            }
+            
+            
+        }
+        
     }
 
     private Node[] randomNodes = new Node[4];
@@ -94,26 +131,31 @@ public class DungeonNodeGenerator : MonoBehaviour
 
         return randomNodes[Random.Range(0, randomNodes.Length)];
     }
-    
-    
-    
-    private Vector2Int UpDirection = Vector2Int.up;
-    private Vector2Int DownDirection = Vector2Int.down;
-    private Vector2Int RightDirection = Vector2Int.right;
-    private Vector2Int LeftDirection = Vector2Int.left;
 
-    private List<Vector2Int> directionList = new List<Vector2Int>();
+
+    public Vector2Int[] Directions = new[] { Vector2Int.up, Vector2Int.down, Vector2Int.right, Vector2Int.left, };
+
     private Vector2Int GetRandomDirection()
     {
-        directionList.Add(UpDirection);
-        directionList.Add(DownDirection);
-        directionList.Add(RightDirection);
-        directionList.Add(LeftDirection);
-        
-        var randomDirection = directionList[Random.Range(0, directionList.Count)];
-        directionList.Clear();
-        return randomDirection;
+        return Directions[Random.Range(0, Directions.Length)];
     }
+    // private Vector2Int UpDirection = Vector2Int.up;
+    // private Vector2Int DownDirection = Vector2Int.down;
+    // private Vector2Int RightDirection = Vector2Int.right;
+    // private Vector2Int LeftDirection = Vector2Int.left;
+    //
+    // private List<Vector2Int> directionList = new List<Vector2Int>();
+    // private Vector2Int GetRandomDirection()
+    // {
+    //     directionList.Add(UpDirection);
+    //     directionList.Add(DownDirection);
+    //     directionList.Add(RightDirection);
+    //     directionList.Add(LeftDirection);
+    //     
+    //     var randomDirection = directionList[Random.Range(0, directionList.Count)];
+    //     directionList.Clear();
+    //     return randomDirection;
+    // }
 
 
 }
