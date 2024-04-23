@@ -342,6 +342,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &824377504
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 824377506}
+  - component: {fileID: 824377505}
+  m_Layer: 0
+  m_Name: NodeDataProvider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &824377505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 824377504}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f0dea96a05155d49a9f14bc960a8aaf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nodeDataSO: {fileID: 11400000, guid: bd2d409b7ae83294fab64a5ff9694886, type: 2}
+--- !u!4 &824377506
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 824377504}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1289395744
 GameObject:
   m_ObjectHideFlags: 0
@@ -351,7 +396,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1289395746}
-  - component: {fileID: 1289395747}
   - component: {fileID: 1289395748}
   m_Layer: 0
   m_Name: DungeonNodeData
@@ -375,19 +419,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1289395747
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1289395744}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 460f9c16ec9a58b498cf8e75e10f2224, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _dungeonNodeData: {fileID: 11400000, guid: bd2d409b7ae83294fab64a5ff9694886, type: 2}
 --- !u!114 &1289395748
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -400,10 +431,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f0b6e8e367731c4b8ffbcc5bb40200d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nodeGameObjectDataProvider: {fileID: 824377505}
   Center: {x: 0, y: 0}
   Width: 5
   Height: 5
-  visualNode: {fileID: 1059708678629029236, guid: 6f23be48ecb8171499a43ec853f4c514, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -411,3 +442,4 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 619394802}
   - {fileID: 1289395746}
+  - {fileID: 824377506}

@@ -7,7 +7,9 @@ using Random = UnityEngine.Random;
 
 public class DungeonNodeGenerator : MonoBehaviour
 {
-    public Vector2Int Center = Vector2Int.zero;
+    [SerializeField] private NodeGameObjectDataProvider nodeGameObjectDataProvider;
+    
+    [HideInInspector] public Vector2Int Center = Vector2Int.zero;
 
 
     public int Width;
@@ -42,7 +44,6 @@ public class DungeonNodeGenerator : MonoBehaviour
         CreateDungeon();
     }
 
-    [SerializeField] private GameObject visualNode;
     private Vector2Int NodePoint = Vector2Int.zero;
 
     private HashSet<Vector2Int> dungeonNodePosList = new HashSet<Vector2Int>();
@@ -65,6 +66,9 @@ public class DungeonNodeGenerator : MonoBehaviour
          * Onlardan da pek bir şey çıkmayacak gibi düşünmeye başlamıstın
          */
         NodeData<CenterNodes> _initNode = new NodeData<CenterNodes>(new CenterNodes(),NodePoint.x,NodePoint.y);
+        _initNode.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(_initNode.node);
+        
+        
         dungeonNodePosList.Add(NodePoint);
         var nextNodePos = _initNode;
         Instantiate(_initNode.node.NodeGameobject, new Vector3(_initNode.PosX,_initNode.PosY,0),Quaternion.identity);
