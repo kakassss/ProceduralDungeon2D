@@ -16,26 +16,46 @@ public class DungeonNodeGenerator : MonoBehaviour
     public int Width;
     public int Height;
 
+    private int halfOfWidth;
+    private int halfOfHeight;
     
     public Grid gridData;
     //private List<NodeData> _nodeDatas;
 
     private void Awake()
     {
+        halfOfWidth = Width / 2;
+        halfOfHeight = Height / 2;
         //10X10
         gridData = new Grid();
-        //_nodeDatas = new List<NodeData>();
-        gridData.Grids = new int[Width, Height];
+        gridData.Grids = new Vector2Int[Width+1, Height+1]; //10x10 -5x-5 to 5x5
+        
 
+        
+        // gridData.Grids[0, 1] = new Vector2Int(0,0);
+        // gridData.Grids[3, 2] = new Vector2Int(3,2);
+        // gridData.Grids[0, 9] = new Vector2Int(1,0);
+        // gridData.Grids[0, 8] = new Vector2Int(-2,0);
 
-        // for (int i = 0; i < Width; i++)
-        // {
-        //     for (int j = 0; j < Height; j++)
-        //     {
-        //         NodeData newNode = new NodeData(i, j);
-        //         _nodeDatas.Add(newNode);
-        //     }
-        // }
+        int counter = 0;
+        for (int i = -5; i <= 5; i++)
+        {
+            for (int j = -5; j <= 5; j++)
+            {
+                
+                gridData.Grids[i + halfOfWidth, j + halfOfHeight] = new Vector2Int(i,j);
+                Debug.Log("onur vec 0 0 " + gridData.Grids[0,0]);
+                Debug.Log("onur vec 0 10" + gridData.Grids[0,10]);
+                Debug.Log("onur vec 0 1" + gridData.Grids[0,1]);
+                Debug.Log("onur vec 11 11 " + gridData.Grids[10,10]);
+                Debug.Log("onur vec " + gridData.Grids[11,11]);
+                Debug.Log("onur vec " + gridData.Grids[11,11]);
+                Debug.Log("onur vec " + gridData.Grids[11,11]);
+                Debug.Log("onur vec " + gridData.Grids[11,11]);
+                Debug.Log("onur vec " + gridData.Grids[11,11]);
+            }
+        }
+        Debug.Log("counterr " + counter);
         //
         // foreach (var nodeData in _nodeDatas)
         // {
@@ -48,8 +68,34 @@ public class DungeonNodeGenerator : MonoBehaviour
     private Vector2Int NodePoint = Vector2Int.zero;
 
     private HashSet<Vector2Int> dungeonNodePosList = new HashSet<Vector2Int>();
-
+    private List<Vector2Int> nodePositions;
+    private List<NodeData<Node>> nodeDataList = new List<NodeData<Node>>();
+    
+    
     private int iterationCount = 100;
+
+    // private void GetBorderDungeonGrid()
+    // {
+    //     for (int i = 0; i < nodePositions.Count; i++)
+    //     {
+    //         //if(gridData.Grids[])
+    //     }
+    // }
+
+    private Vector2Int GetXNodePosition<T>(NodeData<T> nodeData) where T: Node
+    {
+        return nodeData.Position;
+    }
+
+    private NodeData<Node> GetNodeAtXPosition(Vector2Int position)
+    {
+        foreach (var nodeData in nodeDataList.Where(nodeData => nodeData.Position == position))
+        {
+            return nodeData;
+        }
+        Debug.LogError("At Given Position Node can not found");
+        return null;
+    }
     
     private void CreateDungeon()
     {
@@ -57,10 +103,6 @@ public class DungeonNodeGenerator : MonoBehaviour
         _initNode.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(_initNode.node);
 
         var nodeGo = _initNode.node.NodeGameobject;
-        
-        // Debug.Log("CenterNode Y" + _initNode.node.Direction.DirectionY);
-        // Debug.Log("CenterNode X" + _initNode.node.Direction.DirectionX);
-        
         dungeonNodePosList.Add(NodePoint);
         
         var nextNodePos = _initNode.Position;
@@ -73,34 +115,38 @@ public class DungeonNodeGenerator : MonoBehaviour
             dungeonNodePosList.Add(nextNodePos);
         }
         //Transfer to the list
-        List<Vector2Int> NodePositions = new List<Vector2Int>(dungeonNodePosList);
-        
-        foreach (var currentPosition in NodePositions)
+        nodePositions = new List<Vector2Int>(dungeonNodePosList);
+
+        for (int i = 0; i < nodePositions.Count; i++)
         {
             var randomNodeData = GetRandomNodeData<Node>(nextNodePos.x,nextNodePos.y);
             randomNodeData.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(randomNodeData.node);
             
-            Instantiate(randomNodeData.node.NodeGameobject, new Vector3(currentPosition.x,currentPosition.y,0),Quaternion.identity,transform);
+            CheckOpenPositions(randomNodeData.node);
+            
+            nodeDataList.Add(randomNodeData);
+            
+            
+            Instantiate(
+                randomNodeData.node.NodeGameobject, 
+                new Vector3(nodePositions[i].x,nodePositions[i].y,0),
+                Quaternion.identity,
+                transform);
         }
         
-        // var randomNodeData = GetRandomNodeData<Node>(nextNodePos.x,nextNodePos.y);
-        // randomNodeData.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(randomNodeData.node);
-        //
-        // Instantiate(randomNodeData.node.NodeGameobject, new Vector3(nextNodePos.x,nextNodePos.y,0),Quaternion.identity,transform);
-       
-        Debug.Log("hashset " + dungeonNodePosList.Count);
+        foreach (var currentPosition in nodePositions)
+        {
+            var randomNodeData = GetRandomNodeData<Node>(nextNodePos.x,nextNodePos.y);
+            randomNodeData.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(randomNodeData.node);
+            
+            CheckOpenPositions(randomNodeData.node);
+            
+            nodeDataList.Add(randomNodeData);
+            
+            Instantiate(randomNodeData.node.NodeGameobject, new Vector3(currentPosition.x,currentPosition.y,0),Quaternion.identity,transform);
+        }
+
         
-        
-        /*
-         * En son node dataları için yeni bir direction datası oluşturdun.
-         * bu data ile -1 0 1 gibi sayılarla uğrasmak yerine x için ve y için 2 tane ayrı vector oluşturdun.
-         * şuan oluşturulan node'un sağ solunu ve yukarı aşağısının dolu olup olmadıgını test eden basit bir
-         * if else döngüsü kurdun.
-         * 
-         * Yeni oluşturulan data ile bi sorun çıkmadı gibi gözüküyor.
-         * Şuan kalan, for içinde nereye gideceğini seçen basit
-         * bir producedural mantık kaldı gibi gözüküyor.
-         */
         
         
         // NodeData: 0 is open, 1 is close
@@ -170,11 +216,17 @@ public class DungeonNodeGenerator : MonoBehaviour
     }
 
 
-    [HideInInspector] public Vector2Int[] Directions = new[] { Vector2Int.up, Vector2Int.down, Vector2Int.right, Vector2Int.left, };
+    private readonly Vector2Int[] _directions = 
+    {                                               
+        Vector2Int.up,// 0,1 
+        Vector2Int.down,// 0,-1 
+        Vector2Int.right, // 1,0 
+        Vector2Int.left,// -1,0       
+    };
 
     private Vector2Int GetRandomDirection()
     {
-        return Directions[Random.Range(0, Directions.Length)];
+        return _directions[Random.Range(0, _directions.Length)];
     }
     // private Vector2Int UpDirection = Vector2Int.up;
     // private Vector2Int DownDirection = Vector2Int.down;
@@ -199,7 +251,7 @@ public class DungeonNodeGenerator : MonoBehaviour
 
 public class Grid
 {
-    public int[,] Grids;
+    public Vector2Int[,] Grids;
 }
 
 public class NodeData<T>
