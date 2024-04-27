@@ -36,7 +36,6 @@ public class DungeonNodeGenerator : MonoBehaviour
         // gridData.Grids[3, 2] = new Vector2Int(3,2);
         // gridData.Grids[0, 9] = new Vector2Int(1,0);
         // gridData.Grids[0, 8] = new Vector2Int(-2,0);
-
         int counter = 0;
         for (int i = -5; i <= 5; i++)
         {
@@ -44,18 +43,18 @@ public class DungeonNodeGenerator : MonoBehaviour
             {
                 
                 gridData.Grids[i + halfOfWidth, j + halfOfHeight] = new Vector2Int(i,j);
-                Debug.Log("onur vec 0 0 " + gridData.Grids[0,0]);
-                Debug.Log("onur vec 0 10" + gridData.Grids[0,10]);
-                Debug.Log("onur vec 0 1" + gridData.Grids[0,1]);
-                Debug.Log("onur vec 11 11 " + gridData.Grids[10,10]);
-                Debug.Log("onur vec " + gridData.Grids[11,11]);
-                Debug.Log("onur vec " + gridData.Grids[11,11]);
-                Debug.Log("onur vec " + gridData.Grids[11,11]);
-                Debug.Log("onur vec " + gridData.Grids[11,11]);
-                Debug.Log("onur vec " + gridData.Grids[11,11]);
+                counter++;
+
             }
         }
-        Debug.Log("counterr " + counter);
+        
+        
+        // Debug.Log("onur vec 0 0 " + gridData.Grids[0,0]);
+        // Debug.Log("onur vec 0 10" + gridData.Grids[0,10]);
+        // Debug.Log("onur vec 0 1" + gridData.Grids[0,1]);
+        // Debug.Log("onur vec 0 2" + gridData.Grids[0,2]);
+        // Debug.Log("onur vec 11 11 " + gridData.Grids[10,10]);
+        // Debug.Log("counterr " + counter);
         //
         // foreach (var nodeData in _nodeDatas)
         // {
@@ -65,7 +64,7 @@ public class DungeonNodeGenerator : MonoBehaviour
         CreateDungeon();
     }
 
-    private Vector2Int NodePoint = Vector2Int.zero;
+    private Vector2Int pointZero = Vector2Int.zero;
 
     private HashSet<Vector2Int> dungeonNodePosList = new HashSet<Vector2Int>();
     private List<Vector2Int> nodePositions;
@@ -82,41 +81,50 @@ public class DungeonNodeGenerator : MonoBehaviour
     //     }
     // }
 
-    private Vector2Int GetXNodePosition<T>(NodeData<T> nodeData) where T: Node
+    private bool CheckIsNodeExceedGridBorder(Vector2Int position)
     {
-        return nodeData.Position;
-    }
-
-    private NodeData<Node> GetNodeAtXPosition(Vector2Int position)
-    {
-        foreach (var nodeData in nodeDataList.Where(nodeData => nodeData.Position == position))
+        for (int i = -5; i <= 5; i++)
         {
-            return nodeData;
+            for (int j = -5; j <= 5; j++)
+            {
+                if (position == gridData.Grids[i + halfOfWidth, j + halfOfHeight])
+                    return true;
+            }
         }
-        Debug.LogError("At Given Position Node can not found");
-        return null;
+
+        return false;
     }
     
     private void CreateDungeon()
     {
-        NodeData<CenterNodes> _initNode = new NodeData<CenterNodes>(new CenterNodes(),NodePoint.x,NodePoint.y);
-        _initNode.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(_initNode.node);
+        NodeData<CenterNodes> initNode = new NodeData<CenterNodes>(new CenterNodes(),pointZero.x,pointZero.y);
+        initNode.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(initNode.node);
 
-        var nodeGo = _initNode.node.NodeGameobject;
-        dungeonNodePosList.Add(NodePoint);
+        var nodeGo = initNode.node.NodeGameobject;
+        dungeonNodePosList.Add(pointZero);
         
-        var nextNodePos = _initNode.Position;
-        Instantiate(nodeGo, new Vector3(_initNode.PosX,_initNode.PosY,0),Quaternion.identity,transform);
+        var nextNodePos = initNode.Position;
+        Instantiate(nodeGo, new Vector3(initNode.PosX,initNode.PosY,0),Quaternion.identity,transform);
         
         //Create positions
         for (int i = 0; i < iterationCount; i++)
         {
             nextNodePos += GetRandomDirection();
+            
+            if (CheckIsNodeExceedGridBorder(nextNodePos) == false)
+            {
+                nextNodePos = pointZero;
+                continue;
+            }
+            
             dungeonNodePosList.Add(nextNodePos);
         }
         //Transfer to the list
         nodePositions = new List<Vector2Int>(dungeonNodePosList);
 
+        
+        
+        
         for (int i = 0; i < nodePositions.Count; i++)
         {
             var randomNodeData = GetRandomNodeData<Node>(nextNodePos.x,nextNodePos.y);
@@ -133,21 +141,6 @@ public class DungeonNodeGenerator : MonoBehaviour
                 Quaternion.identity,
                 transform);
         }
-        
-        foreach (var currentPosition in nodePositions)
-        {
-            var randomNodeData = GetRandomNodeData<Node>(nextNodePos.x,nextNodePos.y);
-            randomNodeData.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(randomNodeData.node);
-            
-            CheckOpenPositions(randomNodeData.node);
-            
-            nodeDataList.Add(randomNodeData);
-            
-            Instantiate(randomNodeData.node.NodeGameobject, new Vector3(currentPosition.x,currentPosition.y,0),Quaternion.identity,transform);
-        }
-
-        
-        
         
         // NodeData: 0 is open, 1 is close
         void CheckOpenPositions(Node node)
