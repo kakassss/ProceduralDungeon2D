@@ -37,9 +37,9 @@ public class DungeonNodeGenerator : MonoBehaviour
         // gridData.Grids[0, 9] = new Vector2Int(1,0);
         // gridData.Grids[0, 8] = new Vector2Int(-2,0);
         int counter = 0;
-        for (int i = -5; i <= 5; i++)
+        for (int i = -halfOfWidth; i <= halfOfWidth; i++)
         {
-            for (int j = -5; j <= 5; j++)
+            for (int j = -halfOfHeight; j <= halfOfHeight; j++)
             {
                 
                 gridData.Grids[i + halfOfWidth, j + halfOfHeight] = new Vector2Int(i,j);
@@ -83,9 +83,9 @@ public class DungeonNodeGenerator : MonoBehaviour
 
     private bool CheckIsNodeExceedGridBorder(Vector2Int position)
     {
-        for (int i = -5; i <= 5; i++)
+        for (int i = -halfOfWidth; i <= halfOfWidth; i++)
         {
-            for (int j = -5; j <= 5; j++)
+            for (int j = -halfOfHeight; j <= halfOfHeight; j++)
             {
                 if (position == gridData.Grids[i + halfOfWidth, j + halfOfHeight])
                     return true;
