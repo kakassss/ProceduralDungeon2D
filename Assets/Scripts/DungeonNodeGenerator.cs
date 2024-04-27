@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 public class DungeonNodeGenerator : MonoBehaviour
@@ -55,23 +56,40 @@ public class DungeonNodeGenerator : MonoBehaviour
         NodeData<CenterNodes> _initNode = new NodeData<CenterNodes>(new CenterNodes(),NodePoint.x,NodePoint.y);
         _initNode.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(_initNode.node);
 
-        var nodePos = _initNode.Position;
         var nodeGo = _initNode.node.NodeGameobject;
         
-        Debug.Log("CenterNode Y" + _initNode.node.Direction.DirectionY);
-        Debug.Log("CenterNode X" + _initNode.node.Direction.DirectionX);
+        // Debug.Log("CenterNode Y" + _initNode.node.Direction.DirectionY);
+        // Debug.Log("CenterNode X" + _initNode.node.Direction.DirectionX);
         
         dungeonNodePosList.Add(NodePoint);
-        var nextNodePos = _initNode;
-        Instantiate(nodeGo, new Vector3(_initNode.PosX,_initNode.PosY,0),Quaternion.identity);
         
+        var nextNodePos = _initNode.Position;
+        Instantiate(nodeGo, new Vector3(_initNode.PosX,_initNode.PosY,0),Quaternion.identity,transform);
         
-        // for (int i = 0; i < iterationCount; i++)
-        // {
-        //     nextNodePos.Position += GetRandomDirection();
-        //     dungeonNodePosList.Add(nextNodePos.Position);
-        //     Instantiate(visualNode, new Vector3(nextNodePos.PosX,nextNodePos.PosY,0),Quaternion.identity);
-        // }
+        //Create positions
+        for (int i = 0; i < iterationCount; i++)
+        {
+            nextNodePos += GetRandomDirection();
+            dungeonNodePosList.Add(nextNodePos);
+        }
+        //Transfer to the list
+        List<Vector2Int> NodePositions = new List<Vector2Int>(dungeonNodePosList);
+        
+        foreach (var currentPosition in NodePositions)
+        {
+            var randomNodeData = GetRandomNodeData<Node>(nextNodePos.x,nextNodePos.y);
+            randomNodeData.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(randomNodeData.node);
+            
+            Instantiate(randomNodeData.node.NodeGameobject, new Vector3(currentPosition.x,currentPosition.y,0),Quaternion.identity,transform);
+        }
+        
+        // var randomNodeData = GetRandomNodeData<Node>(nextNodePos.x,nextNodePos.y);
+        // randomNodeData.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(randomNodeData.node);
+        //
+        // Instantiate(randomNodeData.node.NodeGameobject, new Vector3(nextNodePos.x,nextNodePos.y,0),Quaternion.identity,transform);
+       
+        Debug.Log("hashset " + dungeonNodePosList.Count);
+        
         
         /*
          * En son node dataları için yeni bir direction datası oluşturdun.
@@ -141,9 +159,18 @@ public class DungeonNodeGenerator : MonoBehaviour
 
         return randomNodes[Random.Range(0, randomNodes.Length)];
     }
+    
+    private NodeData<T> GetRandomNodeData<T>(int x,int y) where T: Node
+    {
+        Type[] nodeTypes = { typeof(UpNodes), typeof(DownNodes), typeof(RightNodes), typeof(LeftNodes) };
+        Type randomNodeType = nodeTypes[Random.Range(0, nodeTypes.Length)];
+        NodeData<T> randomNodeData = new NodeData<T>((T)Activator.CreateInstance(randomNodeType), x, y);
+        
+        return randomNodeData;
+    }
 
 
-    public Vector2Int[] Directions = new[] { Vector2Int.up, Vector2Int.down, Vector2Int.right, Vector2Int.left, };
+    [HideInInspector] public Vector2Int[] Directions = new[] { Vector2Int.up, Vector2Int.down, Vector2Int.right, Vector2Int.left, };
 
     private Vector2Int GetRandomDirection()
     {
@@ -175,7 +202,7 @@ public class Grid
     public int[,] Grids;
 }
 
-public class NodeData<T> where T : Node
+public class NodeData<T>
 {
     public T node;
     public int PosX;
@@ -194,20 +221,20 @@ public class NodeData<T> where T : Node
     }
 }
 
-public class NodeData
-{
-    public Node node;
-    public int PosX;
-    public int PosY;
-
-    public NodeData(int posX, int posY)
-    {
-        PosX = posX;
-        PosY = posY;
-    }
-
-    public void WritePosition()
-    {
-        Debug.Log("X " + PosX + " Y " + PosY);
-    }
-}
+// public class NodeData
+// {
+//     public Node node;
+//     public int PosX;
+//     public int PosY;
+//
+//     public NodeData(int posX, int posY)
+//     {
+//         PosX = posX;
+//         PosY = posY;
+//     }
+//
+//     public void WritePosition()
+//     {
+//         Debug.Log("X " + PosX + " Y " + PosY);
+//     }
+// }
