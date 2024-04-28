@@ -19,18 +19,22 @@ public class DungeonNodeGenerator : MonoBehaviour
     private int halfOfWidth;
     private int halfOfHeight;
     
-    public Grid gridData;
-    //private List<NodeData> _nodeDatas;
+    private Grid gridData;
 
     private void Awake()
     {
         halfOfWidth = Width / 2;
         halfOfHeight = Height / 2;
-        //10X10
-        gridData = new Grid();
-        gridData.Grids = new Vector2Int[Width+1, Height+1]; //10x10 -5x-5 to 5x5
         
-
+        
+        //11X11
+        gridData = new Grid();
+        gridData.Grids = new NodeData<Node>[Width + 1, Height + 1];
+        // gridData = new Grid
+        // {
+        //     Grids = new NodeData<Node>[,] //10x10 -5x-5 to 5x5
+        // };
+        //new Vector2Int[Width+1, Height+1]
         
         // gridData.Grids[0, 1] = new Vector2Int(0,0);
         // gridData.Grids[3, 2] = new Vector2Int(3,2);
@@ -41,12 +45,13 @@ public class DungeonNodeGenerator : MonoBehaviour
         {
             for (int j = -halfOfHeight; j <= halfOfHeight; j++)
             {
-                
-                gridData.Grids[i + halfOfWidth, j + halfOfHeight] = new Vector2Int(i,j);
+                gridData.Grids[i + halfOfWidth, j + halfOfHeight] = new NodeData<Node>(i, j);
                 counter++;
-
             }
         }
+        Debug.Log("gridData.Grids[0, 0] " + gridData.Grids[0, 0].Position);
+
+        GridDataConvertToList();
         
         
         // Debug.Log("onur vec 0 0 " + gridData.Grids[0,0]);
@@ -64,36 +69,64 @@ public class DungeonNodeGenerator : MonoBehaviour
         CreateDungeon();
     }
 
-    private Vector2Int pointZero = Vector2Int.zero;
-
-    private HashSet<Vector2Int> dungeonNodePosList = new HashSet<Vector2Int>();
-    private List<Vector2Int> nodePositions;
-    private List<NodeData<Node>> nodeDataList = new List<NodeData<Node>>();
-    
-    
-    private int iterationCount = 100;
-
-    // private void GetBorderDungeonGrid()
-    // {
-    //     for (int i = 0; i < nodePositions.Count; i++)
-    //     {
-    //         //if(gridData.Grids[])
-    //     }
-    // }
-
-    private bool CheckIsNodeExceedGridBorder(Vector2Int position)
+    private void GridDataConvertToList()
     {
         for (int i = -halfOfWidth; i <= halfOfWidth; i++)
         {
             for (int j = -halfOfHeight; j <= halfOfHeight; j++)
             {
-                if (position == gridData.Grids[i + halfOfWidth, j + halfOfHeight])
-                    return true;
+                GridDataList.Add(gridData.Grids[i + halfOfWidth, j + halfOfHeight]);
+            }
+        }
+    }
+    
+    private Vector2Int pointZero = Vector2Int.zero;
+
+    private HashSet<Vector2Int> nodePositionsHashSet = new HashSet<Vector2Int>();
+    private List<Vector2Int> nodePositionsList;
+    private List<NodeData<Node>> nodeDataList = new List<NodeData<Node>>();
+    
+    
+    private int iterationCount = 100;
+    
+    private List<NodeData<Node>> GridDataList = new List<NodeData<Node>>();
+    private bool CheckIsNodeExceedGridBorder(Vector2Int position)
+    {
+        foreach (var grids in GridDataList)
+        {
+            if (position == grids.Position)
+                return true;
+        }
+        return false;
+    }
+
+    private bool SetNodePositionData(Vector2Int nodePosition)
+    {
+        foreach (var grids in GridDataList)
+        {
+            if (nodePosition == grids.Position)
+            {
+                grids.IsEmpty = false;
+                return true;
             }
         }
 
         return false;
     }
+    /*
+     * YAPTIGIN PREFABLER HEP TEK TARAFLI, BİR YÖNE KAPISI VAR DİĞER YÖNE YOK
+     * BU DA DUNGEONI İMKANSIZ KILIYOR ÖNCE BUNU DÜZELTMEN LAZIM, HALI HAZIRDA KORİDOR OLARAK
+     * BAZI PREFABLERİN VAR AMA ONLARIN DATA KISMI YOK SANIIRM?
+     * 
+     * EN SON DİRECTİON CHECKLEME MANTIGINDA SORUN YAŞADIN, POSİZYONLARI ÖNCEDEN OLUŞTURUP ÜSTÜNE
+     * NODELARI OLUŞTURUYORDUN FAKAT DİRECTİON DATALARINI NODELAR TAŞIYOR
+     * BELKİ BURDA GENEL YAPIYI DEĞİŞTİREBİLİRSİN YA DA BİR ŞEKİLDE NODELARI POZİSYONLA YARATABİLİRSİN
+     *
+     * EN SON YAPMAYA ÇALISTIGIN NODELARI POZİSYON İLE YARATMAK FAKAT O DA KENDİNCE GARİP SORUNLARI VAR
+     *
+     *
+     * 
+     */
     
     private void CreateDungeon()
     {
@@ -101,92 +134,101 @@ public class DungeonNodeGenerator : MonoBehaviour
         initNode.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(initNode.node);
 
         var nodeGo = initNode.node.NodeGameobject;
-        dungeonNodePosList.Add(pointZero);
+        nodePositionsHashSet.Add(pointZero);
         
         var nextNodePos = initNode.Position;
         Instantiate(nodeGo, new Vector3(initNode.PosX,initNode.PosY,0),Quaternion.identity,transform);
+        //initNode.IsEmpty = false;
         
         //Create positions
         for (int i = 0; i < iterationCount; i++)
         {
             nextNodePos += GetRandomDirection();
+            CheckOpenPositions(initNode.node);
+            /*
+             *  KORİDORLARI İŞİN İÇİNE SOKTUKTAN SONRA 
+             *  CHECKOPENPOSİTİON FONKSİYONUNDAN RANDOM BİR NODE DÖNDÜRÜP AŞAĞIDAKİ
+             *  TEMP VARİABLEINA VERMEK BİR FİKİR OLARAK VAR İDİ KAFANDA
+             * 
+             */
+            var randomNodeTemp = GetRandomNodeData<Node>(nextNodePos.x,nextNodePos.y);
+            nodeDataList.Add(randomNodeTemp);
             
+                
+                    
             if (CheckIsNodeExceedGridBorder(nextNodePos) == false)
             {
                 nextNodePos = pointZero;
                 continue;
             }
             
-            dungeonNodePosList.Add(nextNodePos);
+            nodePositionsHashSet.Add(nextNodePos);
         }
+        
         //Transfer to the list
-        nodePositions = new List<Vector2Int>(dungeonNodePosList);
-
+        nodePositionsList = new List<Vector2Int>(nodePositionsHashSet);
+        //SetNodePositionData(nodePositionsList);
         
-        
-        
-        for (int i = 0; i < nodePositions.Count; i++)
+        //Get Random Node and Instantiate
+        for (int i = 0; i < nodePositionsList.Count; i++)
         {
             var randomNodeData = GetRandomNodeData<Node>(nextNodePos.x,nextNodePos.y);
             randomNodeData.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(randomNodeData.node);
             
-            CheckOpenPositions(randomNodeData.node);
+            //CheckOpenPositions(randomNodeData.node);
             
-            nodeDataList.Add(randomNodeData);
+            //nodeDataList.Add(randomNodeData);
             
             
-            Instantiate(
-                randomNodeData.node.NodeGameobject, 
-                new Vector3(nodePositions[i].x,nodePositions[i].y,0),
-                Quaternion.identity,
-                transform);
+            Instantiate(randomNodeData.node.NodeGameobject, 
+                new Vector3(nodePositionsList[i].x,nodePositionsList[i].y,0),
+                Quaternion.identity, transform);
         }
         
-        // NodeData: 0 is open, 1 is close
-        void CheckOpenPositions(Node node)
-        {
-            var currentNode = node.Direction;
-            
-            //Check Left and Right possibilities
-            if (currentNode.DirectionX == Vector2Int.zero)
-            {
-                //Left And Right node area is open
-            }
-            else
-            {
-                if (currentNode.DirectionX == new Vector2Int(0, 1))
-                {
-                    //Left node area is open
-                }
-                else if (currentNode.DirectionX == new Vector2Int(1, 0))
-                {
-                    //Right node area is open
-                }
-            }
-           
-            //Check Up and Down possibilities
-            if (currentNode.DirectionY == Vector2Int.zero)
-            {
-                //Up and Down node area is open
-            }
-            else
-            {
-                if (currentNode.DirectionY == new Vector2Int(0, 1))
-                {
-                    //Up node area is open, down closed
-                }
-                else if (currentNode.DirectionY == new Vector2Int(1, 0))
-                {
-                    //Down node area is open, up closed
-                }
-            }
-            
-            
-        }
+        
         
     }
-
-    private Node[] randomNodes = new Node[4];
+     // NodeData: 0 is open, 1 is close
+    private void CheckOpenPositions(Node node)
+    {
+        var currentNode = node.Direction;
+                
+        //Check Left and Right possibilities
+        if (currentNode.DirectionX == Vector2Int.zero)
+        {
+            //Left And Right node area is open
+        }
+        else
+        {
+            if (currentNode.DirectionX == new Vector2Int(0, 1))
+            {
+                //Left node area is open
+            }
+            else if (currentNode.DirectionX == new Vector2Int(1, 0))
+            {
+                //Right node area is open
+                return;
+            }
+        }
+               
+        //Check Up and Down possibilities
+        if (currentNode.DirectionY == Vector2Int.zero)
+        {
+            //Up and Down node area is open
+        }
+        else
+        {
+            if (currentNode.DirectionY == new Vector2Int(0, 1))
+            {
+                //Up node area is open, down closed
+            }
+            else if (currentNode.DirectionY == new Vector2Int(1, 0))
+            {
+                //Down node area is open, up closed
+            }
+        }
+    }
+    private readonly Node[] randomNodes = new Node[4];
 
     private Node GetRandomNode()
     {
@@ -244,26 +286,7 @@ public class DungeonNodeGenerator : MonoBehaviour
 
 public class Grid
 {
-    public Vector2Int[,] Grids;
-}
-
-public class NodeData<T>
-{
-    public T node;
-    public int PosX;
-    public int PosY;
-
-    public Vector2Int Position;
-    
-    
-    public NodeData(T node, int posX, int posY)
-    {
-        this.node = node;
-        PosX = posX;
-        PosY = posY;
-        Position = new Vector2Int(PosX, PosY);
-
-    }
+    public NodeData<Node>[,] Grids;
 }
 
 // public class NodeData

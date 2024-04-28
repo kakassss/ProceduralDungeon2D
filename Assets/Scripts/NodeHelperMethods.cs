@@ -18,4 +18,14 @@ public static class NodeHelperMethods
         Debug.LogError("At Given Position Node can not found");
         return null;
     }
+    
+    private static NodeData<Node> GetNodeDataAtXGrid(List<NodeData<Node>> nodeDataList,Vector2Int gridPos)
+    {
+        foreach (var node in nodeDataList.Where(node => node.Position == gridPos))
+        {
+            return node;
+        }
+        Debug.LogError("At Given Position NodeData can not found");
+        return null;
+    }
 }
