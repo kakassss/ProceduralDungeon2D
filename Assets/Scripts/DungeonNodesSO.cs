@@ -5,13 +5,16 @@ using UnityEngine;
 public class DungeonNodesSo : ScriptableObject
 {
     public Nodes Nodes;
-    
 }
 
 public class Node
 {
     public GameObject NodeGameobject;
     public Directions Direction;
+}
+
+public class NodeCorridor : Node
+{
 }
 
 public struct Directions
@@ -96,7 +99,7 @@ public class LeftNodes : Node
  * DirectionY || Vector2Int (0,0) both are open
  */
 [Serializable]
-public class UpDownNodes : Node
+public class UpDownNodes : NodeCorridor
 {
     public UpDownNodes()
     {
@@ -112,7 +115,7 @@ public class UpDownNodes : Node
  * DirectionY || Vector2Int (0,1) Up open
  */
 [Serializable]
-public class UpRightNodes : Node
+public class UpRightNodes : NodeCorridor
 {
     public UpRightNodes()
     {
@@ -128,7 +131,7 @@ public class UpRightNodes : Node
  * DirectionY || Vector2Int (0,1) Up open
  */
 [Serializable]
-public class UpLeftNodes : Node
+public class UpLeftNodes : NodeCorridor
 {
     public UpLeftNodes()
     {
@@ -144,7 +147,7 @@ public class UpLeftNodes : Node
  * DirectionY || Vector2Int (1,0) Down open
  */
 [Serializable]
-public class DownLeftNodes : Node
+public class DownLeftNodes : NodeCorridor
 {
     public DownLeftNodes()
     {
@@ -160,7 +163,7 @@ public class DownLeftNodes : Node
  * DirectionY || Vector2Int (1,0) Down open
  */
 [Serializable]
-public class DownRightNodes : Node
+public class DownRightNodes : NodeCorridor
 {
     public DownRightNodes()
     {
@@ -176,7 +179,7 @@ public class DownRightNodes : Node
  * DirectionY || Vector2Int (1,1) both are closed
  */
 [Serializable]
-public class RightLeftNodes : Node
+public class RightLeftNodes : NodeCorridor
 {
     public RightLeftNodes()
     {

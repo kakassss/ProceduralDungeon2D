@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class DungeonNodeGenerator : MonoBehaviour
@@ -16,19 +17,30 @@ public class DungeonNodeGenerator : MonoBehaviour
     private int halfOfHeight;
     
     
-    private readonly Type[] nodeTypes =
+    private readonly Type[] allNodeTypes =
     {
         typeof(UpNodes), typeof(DownNodes), typeof(RightNodes), typeof(LeftNodes),
         typeof(UpDownNodes),typeof(UpRightNodes),typeof(UpLeftNodes),typeof(DownLeftNodes),
         typeof(DownRightNodes),typeof(RightLeftNodes)
     };
     
+    private readonly Type[] nodeTypes =
+    {
+        typeof(UpNodes), typeof(DownNodes), typeof(RightNodes), typeof(LeftNodes),
+    };
+    
+    private readonly Type[] corridorNodeTypes =
+    {
+        typeof(UpDownNodes),typeof(UpRightNodes),typeof(UpLeftNodes),typeof(DownLeftNodes),
+        typeof(DownRightNodes),typeof(RightLeftNodes)
+    };
+    
     private readonly Vector2Int[] _directions = 
     {                                               
-        Vector2Int.up,// 0,1 
-        Vector2Int.down,// 0,-1 
+        Vector2Int.up,    // 0,1 
+        Vector2Int.down,  // 0,-1 
         Vector2Int.right, // 1,0 
-        Vector2Int.left,// -1,0       
+        Vector2Int.left,  // -1,0       
     };
 
     private void Awake()
@@ -214,12 +226,48 @@ public class DungeonNodeGenerator : MonoBehaviour
             }
         }
     }
+
+    [SerializeField] private float corridorNodeRate = 0.5f;
+    //[SerializeField] private float normalNodeRate = 0.8f; 
     private NodeData<T> GetRandomNodeData<T>(int x,int y) where T: Node
     {
-        Type randomNodeType = nodeTypes[Random.Range(0, nodeTypes.Length)];
+        Type randomNodeType = SelectRandomNode();
         NodeData<T> randomNodeData = new NodeData<T>((T)Activator.CreateInstance(randomNodeType), x, y);
         
         return randomNodeData;
+    }
+
+    
+    private Type SelectRandomNode()
+    {
+        Type randomNodeType = null;
+        
+        // if (randomNodeType.IsSubclassOf(typeof(NodeCorridor)) == false)
+        // {
+        //     float random = Random.value;
+        //     if (random >= corridorNodeRate)
+        //     {
+        //         randomNodeType = GetNodeType(corridorNodeTypes);
+        //     } 
+        // }
+
+        float randomValue = Random.value;
+
+        if (randomValue <= corridorNodeRate) // for 0.2f value, %20 chance
+        {
+            randomNodeType = GetNodeType(corridorNodeTypes);
+        }
+        else if (randomValue >= corridorNodeRate)// for 0.2f value, %80 chance
+        {
+            randomNodeType = GetNodeType(nodeTypes);
+        }
+        
+        return randomNodeType;
+    }
+
+    private Type GetNodeType(Type[] currentType)
+    {
+        return currentType[Random.Range(0, currentType.Length)];
     }
     
     private Vector2Int GetRandomDirection()

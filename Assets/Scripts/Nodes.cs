@@ -18,7 +18,7 @@ public class Nodes
     public List<DownLeftNodes> DownLeftNodesList;
     public List<DownRightNodes> DownRightNodesList;
     public List<RightLeftNodes> RightLeftNodesList;
-    
+
     public GameObject GetCurrentNode<T>(List<T> currentNodes) where T : Node
     {
         return currentNodes[Random.Range(0,currentNodes.Count)].NodeGameobject;
