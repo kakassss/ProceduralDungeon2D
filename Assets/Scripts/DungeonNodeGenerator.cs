@@ -11,25 +11,36 @@ public class DungeonNodeGenerator : MonoBehaviour
     public int Width;
     public int Height;
 
-    private Grid gridData;
+    [SerializeField] private float corridorNodeRate = 0.5f;
     
-    private int halfOfWidth;
-    private int halfOfHeight;
+    private Vector2Int _pointZero = Vector2Int.zero;
+
+    private readonly HashSet<Vector2Int> _nodePositionsHashSet = new HashSet<Vector2Int>();
+    private List<Vector2Int> _nodePositionsList;
+    private readonly List<NodeData<Node>> _nodeDataList = new List<NodeData<Node>>();
+    private readonly List<NodeData<Node>> _gridDataList = new List<NodeData<Node>>();
     
+    private Grid _gridData;
     
-    private readonly Type[] allNodeTypes =
+    private readonly int _iterationCount = 100;
+    private int _halfOfWidth;
+    private int _halfOfHeight;
+
+    private int _totalGridCount = 0;
+    
+    private readonly Type[] _allNodeTypes =
     {
         typeof(UpNodes), typeof(DownNodes), typeof(RightNodes), typeof(LeftNodes),
         typeof(UpDownNodes),typeof(UpRightNodes),typeof(UpLeftNodes),typeof(DownLeftNodes),
         typeof(DownRightNodes),typeof(RightLeftNodes)
     };
     
-    private readonly Type[] nodeTypes =
+    private readonly Type[] _nodeTypes =
     {
         typeof(UpNodes), typeof(DownNodes), typeof(RightNodes), typeof(LeftNodes),
     };
     
-    private readonly Type[] corridorNodeTypes =
+    private readonly Type[] _corridorNodeTypes =
     {
         typeof(UpDownNodes),typeof(UpRightNodes),typeof(UpLeftNodes),typeof(DownLeftNodes),
         typeof(DownRightNodes),typeof(RightLeftNodes)
@@ -45,21 +56,19 @@ public class DungeonNodeGenerator : MonoBehaviour
 
     private void Awake()
     {
-        halfOfWidth = Width / 2;
-        halfOfHeight = Height / 2;
-        int counter = 0;
-        
+        _halfOfWidth = Width / 2;
+        _halfOfHeight = Height / 2;
         
         //11X11
-        gridData = new Grid();
-        gridData.Grids = new NodeData<Node>[Width + 1, Height + 1];//10x10 -5x-5 to 5x5
+        _gridData = new Grid();
+        _gridData.Grids = new NodeData<Node>[Width + 1, Height + 1];//10x10 -5x-5 to 5x5
 
-        for (int i = -halfOfWidth; i <= halfOfWidth; i++)
+        for (int i = -_halfOfWidth; i <= _halfOfWidth; i++)
         {
-            for (int j = -halfOfHeight; j <= halfOfHeight; j++)
+            for (int j = -_halfOfHeight; j <= _halfOfHeight; j++)
             {
-                gridData.Grids[i + halfOfWidth, j + halfOfHeight] = new NodeData<Node>(i, j);
-                counter++;
+                _gridData.Grids[i + _halfOfWidth, j + _halfOfHeight] = new NodeData<Node>(i, j);
+                _totalGridCount++;
             }
         }
 
@@ -69,28 +78,18 @@ public class DungeonNodeGenerator : MonoBehaviour
 
     private void GridDataConvertToList()
     {
-        for (int i = -halfOfWidth; i <= halfOfWidth; i++)
+        for (int i = -_halfOfWidth; i <= _halfOfWidth; i++)
         {
-            for (int j = -halfOfHeight; j <= halfOfHeight; j++)
+            for (int j = -_halfOfHeight; j <= _halfOfHeight; j++)
             {
-                GridDataList.Add(gridData.Grids[i + halfOfWidth, j + halfOfHeight]);
+                _gridDataList.Add(_gridData.Grids[i + _halfOfWidth, j + _halfOfHeight]);
             }
         }
     }
     
-    private Vector2Int pointZero = Vector2Int.zero;
-
-    private HashSet<Vector2Int> nodePositionsHashSet = new HashSet<Vector2Int>();
-    private List<Vector2Int> nodePositionsList;
-    private List<NodeData<Node>> nodeDataList = new List<NodeData<Node>>();
-    
-    
-    private int iterationCount = 100;
-    
-    private List<NodeData<Node>> GridDataList = new List<NodeData<Node>>();
     private bool CheckIsNodeExceedGridBorder(Vector2Int position)
     {
-        foreach (var grids in GridDataList)
+        foreach (var grids in _gridDataList)
         {
             if (position == grids.Position)
                 return true;
@@ -100,7 +99,7 @@ public class DungeonNodeGenerator : MonoBehaviour
 
     private bool SetNodePositionData(Vector2Int nodePosition)
     {
-        foreach (var grids in GridDataList)
+        foreach (var grids in _gridDataList)
         {
             if (nodePosition == grids.Position)
             {
@@ -111,35 +110,21 @@ public class DungeonNodeGenerator : MonoBehaviour
 
         return false;
     }
-    /*
-     * YAPTIGIN PREFABLER HEP TEK TARAFLI, BİR YÖNE KAPISI VAR DİĞER YÖNE YOK
-     * BU DA DUNGEONI İMKANSIZ KILIYOR ÖNCE BUNU DÜZELTMEN LAZIM, HALI HAZIRDA KORİDOR OLARAK
-     * BAZI PREFABLERİN VAR AMA ONLARIN DATA KISMI YOK SANIIRM?
-     * 
-     * EN SON DİRECTİON CHECKLEME MANTIGINDA SORUN YAŞADIN, POSİZYONLARI ÖNCEDEN OLUŞTURUP ÜSTÜNE
-     * NODELARI OLUŞTURUYORDUN FAKAT DİRECTİON DATALARINI NODELAR TAŞIYOR
-     * BELKİ BURDA GENEL YAPIYI DEĞİŞTİREBİLİRSİN YA DA BİR ŞEKİLDE NODELARI POZİSYONLA YARATABİLİRSİN
-     *
-     * EN SON YAPMAYA ÇALISTIGIN NODELARI POZİSYON İLE YARATMAK FAKAT O DA KENDİNCE GARİP SORUNLARI VAR
-     *
-     *
-     * 
-     */
     
     private void CreateDungeon()
     {
-        NodeData<CenterNodes> initNode = new NodeData<CenterNodes>(new CenterNodes(),pointZero.x,pointZero.y);
+        NodeData<CenterNodes> initNode = new NodeData<CenterNodes>(new CenterNodes(),_pointZero.x,_pointZero.y);
         initNode.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(initNode.node);
 
         var nodeGo = initNode.node.NodeGameobject;
-        nodePositionsHashSet.Add(pointZero);
+        _nodePositionsHashSet.Add(_pointZero);
         
         var nextNodePos = initNode.Position;
         Instantiate(nodeGo, new Vector3(initNode.PosX,initNode.PosY,0),Quaternion.identity,transform);
         //initNode.IsEmpty = false;
         
         //Create positions
-        for (int i = 0; i < iterationCount; i++)
+        for (int i = 0; i < _iterationCount; i++)
         {
             nextNodePos += GetRandomDirection();
             CheckOpenPositions(initNode.node);
@@ -150,25 +135,25 @@ public class DungeonNodeGenerator : MonoBehaviour
              * 
              */
             var randomNodeTemp = GetRandomNodeData<Node>(nextNodePos.x,nextNodePos.y);
-            nodeDataList.Add(randomNodeTemp);
+            _nodeDataList.Add(randomNodeTemp);
             
                 
                     
             if (CheckIsNodeExceedGridBorder(nextNodePos) == false)
             {
-                nextNodePos = pointZero;
+                nextNodePos = _pointZero;
                 continue;
             }
             
-            nodePositionsHashSet.Add(nextNodePos);
+            _nodePositionsHashSet.Add(nextNodePos);
         }
         
         //Transfer to the list
-        nodePositionsList = new List<Vector2Int>(nodePositionsHashSet);
+        _nodePositionsList = new List<Vector2Int>(_nodePositionsHashSet);
         //SetNodePositionData(nodePositionsList);
         
         //Get Random Node and Instantiate
-        for (int i = 0; i < nodePositionsList.Count; i++)
+        for (int i = 0; i < _nodePositionsList.Count; i++)
         {
             var randomNodeData = GetRandomNodeData<Node>(nextNodePos.x,nextNodePos.y);
             randomNodeData.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(randomNodeData.node);
@@ -179,7 +164,7 @@ public class DungeonNodeGenerator : MonoBehaviour
             
             
             Instantiate(randomNodeData.node.NodeGameobject, 
-                new Vector3(nodePositionsList[i].x,nodePositionsList[i].y,0),
+                new Vector3(_nodePositionsList[i].x,_nodePositionsList[i].y,0),
                 Quaternion.identity, transform);
         }
         
@@ -227,7 +212,7 @@ public class DungeonNodeGenerator : MonoBehaviour
         }
     }
 
-    [SerializeField] private float corridorNodeRate = 0.5f;
+    
     //[SerializeField] private float normalNodeRate = 0.8f; 
     private NodeData<T> GetRandomNodeData<T>(int x,int y) where T: Node
     {
@@ -242,24 +227,15 @@ public class DungeonNodeGenerator : MonoBehaviour
     {
         Type randomNodeType = null;
         
-        // if (randomNodeType.IsSubclassOf(typeof(NodeCorridor)) == false)
-        // {
-        //     float random = Random.value;
-        //     if (random >= corridorNodeRate)
-        //     {
-        //         randomNodeType = GetNodeType(corridorNodeTypes);
-        //     } 
-        // }
-
         float randomValue = Random.value;
-
+        
         if (randomValue <= corridorNodeRate) // for 0.2f value, %20 chance
         {
-            randomNodeType = GetNodeType(corridorNodeTypes);
+            randomNodeType = GetNodeType(_corridorNodeTypes);
         }
         else if (randomValue >= corridorNodeRate)// for 0.2f value, %80 chance
         {
-            randomNodeType = GetNodeType(nodeTypes);
+            randomNodeType = GetNodeType(_nodeTypes);
         }
         
         return randomNodeType;
