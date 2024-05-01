@@ -120,30 +120,34 @@ public class DungeonNodeGenerator : MonoBehaviour
         initNode.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(initNode.node);
         
         var nodeGo = initNode.node.NodeGameobject;
-        _nodePositionsHashSet.Add(_pointZero);
         
         var nextNodePos = initNode.Position;
         //Instantiate(nodeGo, new Vector3(initNode.PosX,initNode.PosY,0),Quaternion.identity,transform);
         _selectedNode = initNode.node;
-        nextNodePos += GetRandomDirection();
         
-        for (int i = 0; i < 3; i++)
+        //_nodePositionsHashSet.Add(nextNodePos);
+        //nextNodePos += GetRandomDirection();
+        
+        for (int i = 0; i < 4; i++)
         {
-            yield return new WaitForSeconds(0.15f);
+            yield return new WaitForSeconds(0.51f);
             
             if (CheckIsNodeExceedGridBorder(nextNodePos) == false)
             {
+                Debug.Log("||||||||||||||||||||||||||||||||||||||||||");
                 nextNodePos = _pointZero;
                 continue;
             }
+            _nodePositionsHashSet.Add(nextNodePos);
             
-            var placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.y, nextNodePos.y);
+            var placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
             _selectedNode = CheckOpenPositions(placableNode.node);
             
+            Debug.Log("nextNode1 " + placableNode.Position);
             
             //var randomNodeTemp = GetRandomNodeData<Node>(nextNodePos.x,nextNodePos.y);
             _nodeDataList.Add(placableNode);
-            _nodePositionsHashSet.Add(nextNodePos);
+            
             
             var mynode = CheckOpenTransformPositions(placableNode);
             nextNodePos += GetRandomDirection();
@@ -166,7 +170,7 @@ public class DungeonNodeGenerator : MonoBehaviour
             
             //nodeDataList.Add(randomNodeData);
             
-            
+            Debug.Log("nextNode2 " + _nodePositionsList[i].x + " " + " " + _nodePositionsList[i].y);
             Instantiate(currentNodeData.node.NodeGameobject, 
                 new Vector3(_nodePositionsList[i].x,_nodePositionsList[i].y,0),
                 Quaternion.identity, transform);
@@ -177,59 +181,59 @@ public class DungeonNodeGenerator : MonoBehaviour
     }
 
     private List<NodeData<Node>> neighboorNodeDatas;
-    private Node CheckOpenTransformPositions<T>(NodeData<T> currentNode) where T : Node
-    {
-        neighboorNodeDatas = new List<NodeData<Node>>();
-        
-        var UpNodePos = currentNode.Position + Vector2Int.up;
-        var DownNodePos = currentNode.Position + Vector2Int.down;
-        var LeftNodePos = currentNode.Position + Vector2Int.left;
-        var RightNodePos = currentNode.Position + Vector2Int.right;
-        
-        Debug.Log("currentNode " + currentNode.Position);
-        Debug.Log("UpNodePos " + UpNodePos);
-        Debug.Log("DownNodePos " + DownNodePos);
-        Debug.Log("LeftNodePos " + LeftNodePos);
-        Debug.Log("RightNodePos " + RightNodePos);
-        
-        
-        Debug.Log("------------------------------------------");
-        
-        var upNodeData = NodeHelperMethods.GetNodeAtXPosition(UpNodePos, _nodeDataList);
-        var downNodeData = NodeHelperMethods.GetNodeAtXPosition(DownNodePos, _nodeDataList);
-        var leftNodeData = NodeHelperMethods.GetNodeAtXPosition(LeftNodePos, _nodeDataList);
-        var rightNodeData = NodeHelperMethods.GetNodeAtXPosition(RightNodePos, _nodeDataList);
-
-        Debug.Log("upNodeData " + upNodeData.IsUnityNull());
-        Debug.Log("downNodeData " + downNodeData.IsUnityNull());
-        Debug.Log("leftNodeData " + leftNodeData.IsUnityNull());
-        Debug.Log("rightNodeData " + rightNodeData.IsUnityNull());
-        
-        Debug.Log("------------------------------------------");
-        
-        if(upNodeData != null) neighboorNodeDatas.Add(upNodeData);
-        if(downNodeData != null) neighboorNodeDatas.Add(downNodeData);
-        if(leftNodeData != null) neighboorNodeDatas.Add(leftNodeData);
-        if(rightNodeData != null) neighboorNodeDatas.Add(rightNodeData);
-
-        List<Node> mynodes = new List<Node>();
-        
-        if (neighboorNodeDatas.Count == 0) return new CenterNodes();
-        
-        foreach (var datas in neighboorNodeDatas)
-        {
-            var aa = CheckOpenPositions(datas.node);
-            mynodes?.Add(aa);
-        }
-        
-        if (mynodes.Count > 1)
-        {
-            var currentNodeCount = mynodes.Count;
-            return mynodes[Random.Range(0, currentNodeCount)];
-        }
-
-        return mynodes[0];
-    }
+    // private Node CheckOpenTransformPositions<T>(NodeData<T> currentNode) where T : Node
+    // {
+    //     neighboorNodeDatas = new List<NodeData<Node>>();
+    //     
+    //     var UpNodePos = currentNode.Position + Vector2Int.up;
+    //     var DownNodePos = currentNode.Position + Vector2Int.down;
+    //     var LeftNodePos = currentNode.Position + Vector2Int.left;
+    //     var RightNodePos = currentNode.Position + Vector2Int.right;
+    //     
+    //     Debug.Log("currentNode " + currentNode.Position);
+    //     Debug.Log("UpNodePos " + UpNodePos);
+    //     Debug.Log("DownNodePos " + DownNodePos);
+    //     Debug.Log("LeftNodePos " + LeftNodePos);
+    //     Debug.Log("RightNodePos " + RightNodePos);
+    //     
+    //     
+    //     Debug.Log("------------------------------------------");
+    //     
+    //     var upNodeData = NodeHelperMethods.GetNodeAtXPosition(UpNodePos, _nodeDataList);
+    //     var downNodeData = NodeHelperMethods.GetNodeAtXPosition(DownNodePos, _nodeDataList);
+    //     var leftNodeData = NodeHelperMethods.GetNodeAtXPosition(LeftNodePos, _nodeDataList);
+    //     var rightNodeData = NodeHelperMethods.GetNodeAtXPosition(RightNodePos, _nodeDataList);
+    //
+    //     Debug.Log("upNodeData " + upNodeData.IsUnityNull());
+    //     Debug.Log("downNodeData " + downNodeData.IsUnityNull());
+    //     Debug.Log("leftNodeData " + leftNodeData.IsUnityNull());
+    //     Debug.Log("rightNodeData " + rightNodeData.IsUnityNull());
+    //     
+    //     Debug.Log("------------------------------------------");
+    //     
+    //     if(upNodeData != null) neighboorNodeDatas.Add(upNodeData);
+    //     if(downNodeData != null) neighboorNodeDatas.Add(downNodeData);
+    //     if(leftNodeData != null) neighboorNodeDatas.Add(leftNodeData);
+    //     if(rightNodeData != null) neighboorNodeDatas.Add(rightNodeData);
+    //
+    //     List<Node> mynodes = new List<Node>();
+    //     
+    //     if (neighboorNodeDatas.Count == 0) return new CenterNodes();
+    //     
+    //     foreach (var datas in neighboorNodeDatas)
+    //     {
+    //         var aa = CheckOpenPositions(datas.node);
+    //         mynodes?.Add(aa);
+    //     }
+    //     
+    //     if (mynodes.Count > 1)
+    //     {
+    //         var currentNodeCount = mynodes.Count;
+    //         return mynodes[Random.Range(0, currentNodeCount)];
+    //     }
+    //
+    //     return mynodes[0];
+    // }
     
     private Node CheckOpenTransformPositions(NodeData<Node> currentNode)
     {

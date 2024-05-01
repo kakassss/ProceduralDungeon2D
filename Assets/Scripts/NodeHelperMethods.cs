@@ -9,16 +9,11 @@ public static class NodeHelperMethods
     {
         return nodeData.Position;
     }
-
-    [CanBeNull]
+    
     public static NodeData<Node> GetNodeAtXPosition(Vector2Int position,List<NodeData<Node>> nodeDataList)
     {
-        foreach (var nodeData in nodeDataList.Where(nodeData => nodeData.Position == position))
-        {
-            return nodeData;
-        }
+        return nodeDataList.FirstOrDefault(nodeData => nodeData.Position == position);
         //Debug.LogError("At Given Position Node can not found");
-        return null;
     }
     
     public static NodeData<Node> GetNodeDataAtXGrid(List<NodeData<Node>> nodeDataList,Vector2Int gridPos)
