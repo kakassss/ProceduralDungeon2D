@@ -15,6 +15,7 @@ public class DungeonNodeGenerator : MonoBehaviour
     public int Height;
 
     [SerializeField] private float corridorNodeRate = 0.5f;
+    [SerializeField] private int _iterationCount = 100;
     
     private Vector2Int _pointZero = Vector2Int.zero;
 
@@ -25,7 +26,6 @@ public class DungeonNodeGenerator : MonoBehaviour
     
     private Grid _gridData;
     
-    private readonly int _iterationCount = 100;
     private int _halfOfWidth;
     private int _halfOfHeight;
 
@@ -116,21 +116,22 @@ public class DungeonNodeGenerator : MonoBehaviour
     private Node _selectedNode;
     private IEnumerator CreateDungeon()
     {
-        NodeData<CenterNodes> initNode = new NodeData<CenterNodes>(new CenterNodes(),_pointZero.x,_pointZero.y);
-        initNode.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(initNode.node);
+        // NodeData<CenterNodes> initNode = new NodeData<CenterNodes>(new CenterNodes(),_pointZero.x,_pointZero.y);
+        // initNode.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(initNode.node);
+        // _selectedNode = initNode.node;
+        var nextNodePos = _pointZero;
         
-        var nodeGo = initNode.node.NodeGameobject;
+        //
+        // var nodeGo = initNode.node.NodeGameobject;
         
-        var nextNodePos = initNode.Position;
         //Instantiate(nodeGo, new Vector3(initNode.PosX,initNode.PosY,0),Quaternion.identity,transform);
-        _selectedNode = initNode.node;
         
         //_nodePositionsHashSet.Add(nextNodePos);
         //nextNodePos += GetRandomDirection();
         
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < _iterationCount; i++)
         {
-            yield return new WaitForSeconds(0.51f);
+            yield return new WaitForSeconds(0.01f);
             
             if (CheckIsNodeExceedGridBorder(nextNodePos) == false)
             {
@@ -138,19 +139,21 @@ public class DungeonNodeGenerator : MonoBehaviour
                 nextNodePos = _pointZero;
                 continue;
             }
-            _nodePositionsHashSet.Add(nextNodePos);
+            NodeData<Node> placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
+            Debug.Log("nextNode1 " + nextNodePos);
+            Debug.Log("nextNode2 " + placableNode.Position);
+            _selectedNode = CheckOpenTransformPositions(placableNode);
             
-            var placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
-            _selectedNode = CheckOpenPositions(placableNode.node);
             
-            Debug.Log("nextNode1 " + placableNode.Position);
             
             //var randomNodeTemp = GetRandomNodeData<Node>(nextNodePos.x,nextNodePos.y);
+            _nodePositionsHashSet.Add(nextNodePos);
             _nodeDataList.Add(placableNode);
             
             
-            var mynode = CheckOpenTransformPositions(placableNode);
+            //var mynode = CheckOpenTransformPositions(placableNode);
             nextNodePos += GetRandomDirection();
+           
         }
         
         //Transfer to the list
@@ -296,66 +299,37 @@ public class DungeonNodeGenerator : MonoBehaviour
         List<Node> _canPlacableNodes = new List<Node>();
         
         //Check Left and Right possibilities
-        if (currentNode.DirectionX == Vector2Int.zero)
-        {
-            //Left And Right node area is open
-            // _canPlacableNodes.Add(new LeftNodes());
-            // _canPlacableNodes.Add(new RightNodes());
-            //_canPlacableNodes.Add(new RightLeftNodes());
-        }
+   
         
         if (currentNode.DirectionX.x == 0)
         {
             //Left node area is open
-            _canPlacableNodes.Add(new RightNodes());
+            //_canPlacableNodes.Add(new RightNodes());
+            _canPlacableNodes.Add(new DownLeftNodes());
         }
         else if (currentNode.DirectionX.y == 0)
         {
             //Right node area is open
-            _canPlacableNodes.Add(new LeftNodes());
-        }
-        
-               
-        //Check Up and Down possibilities
-        if (currentNode.DirectionY == Vector2Int.zero)
-        {
-            //Up and Down node area is open
-            // _canPlacableNodes.Add(new UpNodes());
-            // _canPlacableNodes.Add(new DownNodes());
-            //_canPlacableNodes.Add(new UpDownNodes());
+            //_canPlacableNodes.Add(new LeftNodes());
+            _canPlacableNodes.Add(new DownLeftNodes());
+            _canPlacableNodes.Add(new DownRightNodes());
         }
         
         if (currentNode.DirectionY.x == 0)
         {
             //Up node area is open, down closed
-            _canPlacableNodes.Add(new DownNodes());
-                
+            //_canPlacableNodes.Add(new DownNodes());
+            _canPlacableNodes.Add(new DownLeftNodes());
+            _canPlacableNodes.Add(new DownRightNodes());
+            _canPlacableNodes.Add(new UpDownNodes());
         }
         else if (currentNode.DirectionY.y == 0)
         {
             //Down node area is open, up closed 
-            _canPlacableNodes.Add(new UpNodes());
-        }
-        
-
-        if (currentNode.DirectionX.y == 0 && currentNode.DirectionY.x == 0)
-        {
+            //_canPlacableNodes.Add(new UpNodes());
             _canPlacableNodes.Add(new UpRightNodes());
-        }
-        
-        if (currentNode.DirectionX.x == 0 && currentNode.DirectionY.x == 0)
-        {
             _canPlacableNodes.Add(new UpLeftNodes());
-        }
-        
-        if (currentNode.DirectionX.x == 0 && currentNode.DirectionY.y == 0)
-        {
-            _canPlacableNodes.Add(new DownLeftNodes());
-        }
-        
-        if (currentNode.DirectionX.y == 0 && currentNode.DirectionY.y == 0)
-        {
-            _canPlacableNodes.Add(new DownRightNodes());
+            _canPlacableNodes.Add(new UpDownNodes());
         }
 
         if (_canPlacableNodes.Count > 1)
@@ -378,6 +352,12 @@ public class DungeonNodeGenerator : MonoBehaviour
 
     private NodeData<T> GetNodeDataFromNode<T>(Node node,int posX,int posY) where T: Node
     {
+        if (node == null)
+        {
+            NodeData<T> center = new NodeData<T>((T)Activator.CreateInstance(typeof(CenterNodes)), posX, posY);
+            return center;
+        }
+        
         Type _tpyeNode = node.GetType();
         NodeData<T> _nodeData = new NodeData<T>((T)Activator.CreateInstance(_tpyeNode), posX, posY);
         return _nodeData;
