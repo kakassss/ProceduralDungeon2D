@@ -24,4 +24,6 @@ public class NodeData<T>
         PosY = posY;
         Position = new Vector2Int(PosX, PosY);
     }
+
+   
 }
