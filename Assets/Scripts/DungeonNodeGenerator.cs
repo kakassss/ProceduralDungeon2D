@@ -101,16 +101,37 @@ public class DungeonNodeGenerator : MonoBehaviour
         return false;
     }
 
-    private bool SetNodePositionData(Vector2Int nodePosition)
+    private void SetNodePositionData(Vector2Int nodePosition)
     {
         foreach (var grids in _gridDataList.Where(grids => nodePosition == grids.Position))
         {
             grids.IsEmpty = false;
-            return true;
         }
-
-        return false;
     }
+    /*
+     *  GOING TO REVISION ON MAIN MECHANIC  
+     *  Normalde pozisyonları 0,0'dan başlatarak random vectorler ekleyerek ilerletirdin.
+     *  Günün sonunda hep random node yerleştirme düşünerek yaptıgımızdan dolayı, şimdi fark ediyoruz ki
+     *  bunları birleştirmek zor, yani günün sonunda hepsi centerNode olur.
+     *  Hepsi kendi çevresine baktıgında en mantıklısı centerNode oluyor, eğer koridor mantıgı gelirse
+     *  diğer tarafdakiler patlıyor.
+     *
+     *
+     * şuan yapmak istediğin şu
+     * grid data listinden random bir node çekeceksin atıyorum, (5,4) node'u geldi
+     * 0,0'dan oraya gitmen için bi path oluşacak, işte örnek olarak
+     * 1,0 1,0 1,0 1,0 1,0 0,1 0,1 0,1 0,1 0,1 = 5,4 gibi
+     * 5 tane rightToLeft corridor 1 tane right up 3 tane updown corridor'dan oluşacak
+     * bunu 5-6 kere tekrar ediceksin.
+     * günün sonunda 5,4 çıkmalı bu vectorlerın toplamı buraya dikkat et
+     * örnek videodaki adamın algoritması böyle gibi gözüküyor
+     * centernode hep ortada, 3-4 tane path var bunlar birbirini tamamlıyor ve birbirine ellemiyor.
+     * 
+     */
+    
+    
+    
+    
     private Node _selectedNode;
     private IEnumerator CreateDungeon()
     {
