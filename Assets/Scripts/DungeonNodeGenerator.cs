@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -46,7 +47,7 @@ public class DungeonNodeGenerator : MonoBehaviour
     private readonly Type[] _corridorNodeTypes =
     {
         typeof(UpDownNodes),typeof(UpRightNodes),typeof(UpLeftNodes),typeof(DownLeftNodes),
-        typeof(DownRightNodes),typeof(RightLeftNodes)
+        typeof(DownRightNodes),typeof(RightLeftNodes), typeof(CenterNodes)
     };
     
     private readonly Vector2Int[] _directions = 
@@ -102,13 +103,10 @@ public class DungeonNodeGenerator : MonoBehaviour
 
     private bool SetNodePositionData(Vector2Int nodePosition)
     {
-        foreach (var grids in _gridDataList)
+        foreach (var grids in _gridDataList.Where(grids => nodePosition == grids.Position))
         {
-            if (nodePosition == grids.Position)
-            {
-                grids.IsEmpty = false;
-                return true;
-            }
+            grids.IsEmpty = false;
+            return true;
         }
 
         return false;
@@ -131,7 +129,7 @@ public class DungeonNodeGenerator : MonoBehaviour
         
         for (int i = 0; i < _iterationCount; i++)
         {
-            yield return new WaitForSeconds(0.01f);
+            yield return new WaitForSeconds(0.001f);
             
             if (CheckIsNodeExceedGridBorder(nextNodePos) == false)
             {
@@ -139,7 +137,9 @@ public class DungeonNodeGenerator : MonoBehaviour
                 nextNodePos = _pointZero;
                 continue;
             }
+            
             NodeData<Node> placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
+            SetNodePositionData(placableNode.Position);
             Debug.Log("nextNode1 " + nextNodePos);
             Debug.Log("nextNode2 " + placableNode.Position);
             _selectedNode = CheckOpenTransformPositions(placableNode);
@@ -150,7 +150,7 @@ public class DungeonNodeGenerator : MonoBehaviour
             _nodePositionsHashSet.Add(nextNodePos);
             _nodeDataList.Add(placableNode);
             
-            
+             
             //var mynode = CheckOpenTransformPositions(placableNode);
             nextNodePos += GetRandomDirection();
            
@@ -272,24 +272,21 @@ public class DungeonNodeGenerator : MonoBehaviour
         if(downNodeData != null) neighboorNodeDatas.Add(downNodeData);
         if(leftNodeData != null) neighboorNodeDatas.Add(leftNodeData);
         if(rightNodeData != null) neighboorNodeDatas.Add(rightNodeData);
-
-        List<Node> mynodes = new List<Node>();
         
         if (neighboorNodeDatas.Count == 0) return new CenterNodes();
+        List<Node> _sendableNodes = new List<Node>();
         
         foreach (var datas in neighboorNodeDatas)
         {
-            var aa = CheckOpenPositions(datas.node);
-            mynodes?.Add(aa);
-        }
-        
-        if (mynodes.Count > 1)
-        {
-            var currentNodeCount = mynodes.Count;
-            return mynodes[Random.Range(0, currentNodeCount)];
+            var _validNodes = CheckOpenPositions(datas.node);
+            _sendableNodes.Add(_validNodes);
         }
 
-        return mynodes[0];
+        if (_sendableNodes.Count <= 1) return _sendableNodes[0];
+        
+        var currentNodeCount = _sendableNodes.Count;
+        return _sendableNodes[Random.Range(0, currentNodeCount)];
+
     }
     
      // NodeData: 0 is open, 1 is close
@@ -299,21 +296,30 @@ public class DungeonNodeGenerator : MonoBehaviour
         List<Node> _canPlacableNodes = new List<Node>();
         
         //Check Left and Right possibilities
-   
+
+        
+        
         
         if (currentNode.DirectionX.x == 0)
         {
             //Left node area is open
-            //_canPlacableNodes.Add(new RightNodes());
+            _canPlacableNodes.Add(new RightNodes());
             _canPlacableNodes.Add(new DownLeftNodes());
         }
         else if (currentNode.DirectionX.y == 0)
         {
             //Right node area is open
-            //_canPlacableNodes.Add(new LeftNodes());
+            _canPlacableNodes.Add(new LeftNodes());
             _canPlacableNodes.Add(new DownLeftNodes());
             _canPlacableNodes.Add(new DownRightNodes());
         }
+        
+        if (_canPlacableNodes.Count > 1)
+        {
+            var currentNodeCount = _canPlacableNodes.Count;
+            return _selectedNode = _canPlacableNodes[Random.Range(0, currentNodeCount)];
+        }
+        
         
         if (currentNode.DirectionY.x == 0)
         {
