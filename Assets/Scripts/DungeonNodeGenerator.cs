@@ -157,17 +157,23 @@ public class DungeonNodeGenerator : MonoBehaviour
     private Vector2Int _currentPointPosition;
     private NodeData<Node> _currentPointNodeData;
     private Node _selectedNode;
+    private List<Node> _xNodes = new();
+    private List<Node> _yNodes = new();
 
     private Node SetSelectedNodes(Vector2Int nodeDirection)
     {
         if (nodeDirection.x is 1 or -1 && nodeDirection.y == 0)
         {
-            return new RightLeftNodes();
+            var rightLeftNode = new RightLeftNodes();
+            _xNodes.Add(rightLeftNode);
+            return rightLeftNode;
         }
         
         if (nodeDirection.y is 1 or -1 && nodeDirection.x == 0)
         {
-            return new UpDownNodes();
+            var upDownNode = new UpDownNodes();
+            _yNodes.Add(upDownNode);
+            return upDownNode;
         }
         
         Debug.LogError("CenterNode has returned!");
@@ -191,9 +197,9 @@ public class DungeonNodeGenerator : MonoBehaviour
         Vector2Int corridorPosition;
         
         Node corridorNode;
-        int nodeDataIndexCounter = 0;
         var nextNodePos = startNodePosition;
-        
+        int corner = Random.Range(0,2);
+        bool cornerSelect = corner == 0;
         
         NodeData<CenterNodes> centerNode = GetNodeDataFromNode<CenterNodes>(_selectedNode, nextNodePos.x, nextNodePos.y);
         centerNode.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(centerNode.node);
@@ -208,6 +214,7 @@ public class DungeonNodeGenerator : MonoBehaviour
         var posX = targetNodePosition.x;
         var posY = targetNodePosition.y;
         
+        
         //An example for (4,-4)
         if (posX > 0 && posY < 0)
         {
@@ -217,20 +224,8 @@ public class DungeonNodeGenerator : MonoBehaviour
             {
                 corridorPosition = new Vector2Int(1, 0);
                 targetNodePosition -= corridorPosition;
-                    
-                for (int i = 0; i < targetNodePosition.x; i++)
-                {
-                    mainPathPosition.Add(new Vector2Int(1,0));
-                }
-                    
-                mainPathPosition.Add(corridorPosition);
                 
-                
-                for (int i = 0; i < Mathf.Abs(targetNodePosition.y); i++)
-                {
-                    mainPathPosition.Add(new Vector2Int(0,-1));
-                } 
-
+                SetTargetPositionNodes();
                 
                 //Create NodesDatas and declare their positions
                 for (int i = 0; i < mainPathPosition.Count; i++)
@@ -238,17 +233,13 @@ public class DungeonNodeGenerator : MonoBehaviour
                     nextNodePos += mainPathPosition[i];
                     _selectedNode = SetSelectedNodes(mainPathPosition[i]);
                     NodeData<Node> placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
-                    nodeDataIndexCounter++;
                     pathNodes.Add(placableNode);
-                    
                 }
-                
-                foreach (var nodePos in mainPathPosition)
-                {
-                    
-                    
-                    
-                }
+                Debug.Log("xnodes " + _xNodes.Count);
+                var xEdgeNode = pathNodes[_xNodes.Count-1];
+                xEdgeNode.node = cornerSelect ? new DownLeftNodes() : new UpRightNodes();
+                var yEdgeNode = pathNodes[^1];
+                yEdgeNode.node = cornerSelect ? new UpNodes() : new LeftNodes();
                 
                 //Instantiate NodeData Gameobjects
                 foreach (var nodeData in pathNodes)
@@ -289,6 +280,39 @@ public class DungeonNodeGenerator : MonoBehaviour
                 
         }
 
+        
+        void SetTargetPositionNodes()
+        {
+            if (cornerSelect)
+            {
+                for (int i = 0; i < targetNodePosition.x; i++)
+                {
+                    mainPathPosition.Add(new Vector2Int(1,0));
+                }
+                    
+                mainPathPosition.Add(corridorPosition);
+                
+                for (int i = 0; i < Mathf.Abs(targetNodePosition.y); i++)
+                {
+                    mainPathPosition.Add(new Vector2Int(0,-1));
+                }
+            }
+            else
+            {
+                for (int i = 0; i < Mathf.Abs(targetNodePosition.y); i++)
+                {
+                    mainPathPosition.Add(new Vector2Int(0,-1));
+                }
+                    
+                mainPathPosition.Add(corridorPosition);
+                    
+                for (int i = 0; i < targetNodePosition.x; i++)
+                {
+                    mainPathPosition.Add(new Vector2Int(1,0));
+                }
+            }
+        }
+        
     }
     
     
