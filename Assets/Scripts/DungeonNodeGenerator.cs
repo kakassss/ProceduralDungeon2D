@@ -10,26 +10,21 @@ using Random = UnityEngine.Random;
 
 public class DungeonNodeGenerator : MonoBehaviour
 {
-    [SerializeField] private NodeGameObjectDataProvider nodeGameObjectDataProvider;
-    
     public int Width;
     public int Height;
-
+    
+    [SerializeField] private NodeGameObjectDataProvider nodeGameObjectDataProvider;
     [SerializeField] private float corridorNodeRate = 0.5f;
     [SerializeField] private int _iterationCount = 100;
     
-    private Vector2Int _pointZero = Vector2Int.zero;
-
-    private readonly HashSet<Vector2Int> _nodePositionsHashSet = new HashSet<Vector2Int>();
-    private List<Vector2Int> _nodePositionsList;
-    private readonly List<NodeData<Node>> _nodeDataList = new List<NodeData<Node>>();
     private readonly List<NodeData<Node>> _gridDataList = new List<NodeData<Node>>();
+    private List<Vector2Int> _nodePositionsList;
     
     private Grid _gridData;
     
     private int _halfOfWidth;
     private int _halfOfHeight;
-
+    
     public Node CenterNode { get; private set; } = new CenterNodes();
     public Node UpNode { get; private set; } = new UpNodes();
     public Node DownNode { get; private set; } = new DownNodes();
@@ -42,9 +37,6 @@ public class DungeonNodeGenerator : MonoBehaviour
     public Node DownRightNode { get; private set; } = new DownRightNodes();
     public Node RightLeftNode { get; private set; } = new RightLeftNodes();
     
-
-
-    private int _totalGridCount = 0;
     
     private readonly Type[] _allNodeTypes =
     {
@@ -136,7 +128,8 @@ public class DungeonNodeGenerator : MonoBehaviour
     private Node _selectedNode;
     private List<Node> _xNodes;
     private List<Node> _yNodes;
-    
+    private int _totalGridCount;
+
     private void SelectPointNodePosition()
     {
         //var randomGridData = Random.Range(0, _gridDataList.Count);
@@ -172,7 +165,6 @@ public class DungeonNodeGenerator : MonoBehaviour
                 Quaternion.identity, transform);
         }
         
-        
         // Assuming target vector be like (1,2) (-2,3) (-3,-5) (2,-4)
         if (targetNodePosition.x == 0 || targetNodePosition.y == 0) return;
         
@@ -191,6 +183,7 @@ public class DungeonNodeGenerator : MonoBehaviour
                 nextNodePos += mainPathPosition[i];
                 _selectedNode = SetSelectedNodes(mainPathPosition[i],RightLeftNode,UpDownNode);
                 NodeData<Node> placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
+                placableNode.IsEmpty = false;
                 pathNodes.Add(placableNode);
             }
             
@@ -221,6 +214,7 @@ public class DungeonNodeGenerator : MonoBehaviour
                 nextNodePos += mainPathPosition[i];
                 _selectedNode = SetSelectedNodes(mainPathPosition[i],RightLeftNode,UpDownNode);
                 NodeData<Node> placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
+                placableNode.IsEmpty = false;
                 pathNodes.Add(placableNode);
             }
             
@@ -247,6 +241,7 @@ public class DungeonNodeGenerator : MonoBehaviour
                 nextNodePos += mainPathPosition[i];
                 _selectedNode = SetSelectedNodes(mainPathPosition[i],RightLeftNode,UpDownNode);
                 NodeData<Node> placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
+                placableNode.IsEmpty = false;
                 pathNodes.Add(placableNode);
             }
             
@@ -273,6 +268,7 @@ public class DungeonNodeGenerator : MonoBehaviour
                 nextNodePos += mainPathPosition[i];
                 _selectedNode = SetSelectedNodes(mainPathPosition[i],RightLeftNode,UpDownNode);
                 NodeData<Node> placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
+                placableNode.IsEmpty = false;
                 pathNodes.Add(placableNode);
             }
             
@@ -364,245 +360,6 @@ public class DungeonNodeGenerator : MonoBehaviour
         
         Debug.LogError("CenterNode has returned!");
         return CenterNode;
-    }
-    
-    
-    
-    private IEnumerator CreateDungeon()
-    {
-        // NodeData<CenterNodes> initNode = new NodeData<CenterNodes>(new CenterNodes(),_pointZero.x,_pointZero.y);
-        // initNode.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(initNode.node);
-        // _selectedNode = initNode.node;
-        var nextNodePos = _pointZero;
-        
-        //
-        // var nodeGo = initNode.node.NodeGameobject;
-        
-        //Instantiate(nodeGo, new Vector3(initNode.PosX,initNode.PosY,0),Quaternion.identity,transform);
-        
-        //_nodePositionsHashSet.Add(nextNodePos);
-        //nextNodePos += GetRandomDirection();
-        
-        for (int i = 0; i < _iterationCount; i++)
-        {
-            yield return new WaitForSeconds(0.001f);
-            
-            if (CheckIsNodeExceedGridBorder(nextNodePos) == false)
-            {
-                Debug.Log("||||||||||||||||||||||||||||||||||||||||||");
-                nextNodePos = _pointZero;
-                continue;
-            }
-            
-            NodeData<Node> placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
-            SetNodePositionData(placableNode.Position);
-            Debug.Log("nextNode1 " + nextNodePos);
-            Debug.Log("nextNode2 " + placableNode.Position);
-            _selectedNode = CheckOpenTransformPositions(placableNode);
-            
-            
-            
-            //var randomNodeTemp = GetRandomNodeData<Node>(nextNodePos.x,nextNodePos.y);
-            _nodePositionsHashSet.Add(nextNodePos);
-            _nodeDataList.Add(placableNode);
-            
-             
-            //var mynode = CheckOpenTransformPositions(placableNode);
-            nextNodePos += GetRandomDirection();
-           
-        }
-        
-        //Transfer to the list
-        _nodePositionsList = new List<Vector2Int>(_nodePositionsHashSet);
-        //SetNodePositionData(nodePositionsList);
-        
-        
-        //Get Random Node and Instantiate
-        for (int i = 0; i < _nodePositionsList.Count; i++)
-        {
-            var currentNodeData = _nodeDataList[i];
-            currentNodeData.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(currentNodeData.node);
-            // var randomNodeData = GetRandomNodeData<Node>(nextNodePos.x,nextNodePos.y);
-            // randomNodeData.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(randomNodeData.node);
-            
-            //CheckOpenPositions(randomNodeData.node);
-            
-            //nodeDataList.Add(randomNodeData);
-            
-            Instantiate(currentNodeData.node.NodeGameobject, 
-                new Vector3(_nodePositionsList[i].x,_nodePositionsList[i].y,0),
-                Quaternion.identity, transform);
-        }
-        
-        
-        
-    }
-
-    private List<NodeData<Node>> neighboorNodeDatas;
-
-    [SerializeField] private Node _upNodes;
-    // private Node CheckOpenTransformPositions<T>(NodeData<T> currentNode) where T : Node
-    // {
-    //     neighboorNodeDatas = new List<NodeData<Node>>();
-    //     
-    //     var UpNodePos = currentNode.Position + Vector2Int.up;
-    //     var DownNodePos = currentNode.Position + Vector2Int.down;
-    //     var LeftNodePos = currentNode.Position + Vector2Int.left;
-    //     var RightNodePos = currentNode.Position + Vector2Int.right;
-    //     
-    //     Debug.Log("currentNode " + currentNode.Position);
-    //     Debug.Log("UpNodePos " + UpNodePos);
-    //     Debug.Log("DownNodePos " + DownNodePos);
-    //     Debug.Log("LeftNodePos " + LeftNodePos);
-    //     Debug.Log("RightNodePos " + RightNodePos);
-    //     
-    //     
-    //     Debug.Log("------------------------------------------");
-    //     
-    //     var upNodeData = NodeHelperMethods.GetNodeAtXPosition(UpNodePos, _nodeDataList);
-    //     var downNodeData = NodeHelperMethods.GetNodeAtXPosition(DownNodePos, _nodeDataList);
-    //     var leftNodeData = NodeHelperMethods.GetNodeAtXPosition(LeftNodePos, _nodeDataList);
-    //     var rightNodeData = NodeHelperMethods.GetNodeAtXPosition(RightNodePos, _nodeDataList);
-    //
-    //     Debug.Log("upNodeData " + upNodeData.IsUnityNull());
-    //     Debug.Log("downNodeData " + downNodeData.IsUnityNull());
-    //     Debug.Log("leftNodeData " + leftNodeData.IsUnityNull());
-    //     Debug.Log("rightNodeData " + rightNodeData.IsUnityNull());
-    //     
-    //     Debug.Log("------------------------------------------");
-    //     
-    //     if(upNodeData != null) neighboorNodeDatas.Add(upNodeData);
-    //     if(downNodeData != null) neighboorNodeDatas.Add(downNodeData);
-    //     if(leftNodeData != null) neighboorNodeDatas.Add(leftNodeData);
-    //     if(rightNodeData != null) neighboorNodeDatas.Add(rightNodeData);
-    //
-    //     List<Node> mynodes = new List<Node>();
-    //     
-    //     if (neighboorNodeDatas.Count == 0) return new CenterNodes();
-    //     
-    //     foreach (var datas in neighboorNodeDatas)
-    //     {
-    //         var aa = CheckOpenPositions(datas.node);
-    //         mynodes?.Add(aa);
-    //     }
-    //     
-    //     if (mynodes.Count > 1)
-    //     {
-    //         var currentNodeCount = mynodes.Count;
-    //         return mynodes[Random.Range(0, currentNodeCount)];
-    //     }
-    //
-    //     return mynodes[0];
-    // }
-    
-    private Node CheckOpenTransformPositions(NodeData<Node> currentNode)
-    {
-        neighboorNodeDatas = new List<NodeData<Node>>();
-        
-        var UpNodePos = currentNode.Position + Vector2Int.up;
-        var DownNodePos = currentNode.Position + Vector2Int.down;
-        var LeftNodePos = currentNode.Position + Vector2Int.left;
-        var RightNodePos = currentNode.Position + Vector2Int.right;
-        
-        Debug.Log("currentNode name " + currentNode.node);
-        Debug.Log("currentNode " + currentNode.Position);
-        Debug.Log("UpNodePos " + UpNodePos);
-        Debug.Log("DownNodePos " + DownNodePos);
-        Debug.Log("LeftNodePos " + LeftNodePos);
-        Debug.Log("RightNodePos " + RightNodePos);
-        
-        Debug.Log("------------------------------------------");
-        
-        var upNodeData = NodeHelperMethods.GetNodeAtXPosition(UpNodePos, _nodeDataList);
-        var downNodeData = NodeHelperMethods.GetNodeAtXPosition(DownNodePos, _nodeDataList);
-        var leftNodeData = NodeHelperMethods.GetNodeAtXPosition(LeftNodePos, _nodeDataList);
-        var rightNodeData = NodeHelperMethods.GetNodeAtXPosition(RightNodePos, _nodeDataList);
-        
-        Debug.Log("upNodeData " + upNodeData.IsUnityNull());
-        Debug.Log("downNodeData " + downNodeData.IsUnityNull());
-        Debug.Log("leftNodeData " + leftNodeData.IsUnityNull());
-        Debug.Log("rightNodeData " + rightNodeData.IsUnityNull());
-        
-        Debug.Log("------------------------------------------");
-        
-        if(upNodeData != null) neighboorNodeDatas.Add(upNodeData);
-        if(downNodeData != null) neighboorNodeDatas.Add(downNodeData);
-        if(leftNodeData != null) neighboorNodeDatas.Add(leftNodeData);
-        if(rightNodeData != null) neighboorNodeDatas.Add(rightNodeData);
-        
-        if (neighboorNodeDatas.Count == 0) return new CenterNodes();
-        List<Node> _sendableNodes = new List<Node>();
-        
-        foreach (var datas in neighboorNodeDatas)
-        {
-            var _validNodes = CheckOpenPositions(datas.node);
-            _sendableNodes.Add(_validNodes);
-        }
-
-        if (_sendableNodes.Count <= 1) return _sendableNodes[0];
-        
-        var currentNodeCount = _sendableNodes.Count;
-        return _sendableNodes[Random.Range(0, currentNodeCount)];
-
-    }
-    
-     // NodeData: 0 is open, 1 is close
-    private Node CheckOpenPositions(Node node)
-    {
-        var currentNode = node.Direction;
-        List<Node> _canPlacableNodes = new List<Node>();
-        
-        //Check Left and Right possibilities
-
-        
-        
-        
-        if (currentNode.DirectionX.x == 0)
-        {
-            //Left node area is open
-            _canPlacableNodes.Add(new RightNodes());
-            _canPlacableNodes.Add(new DownLeftNodes());
-        }
-        else if (currentNode.DirectionX.y == 0)
-        {
-            //Right node area is open
-            _canPlacableNodes.Add(new LeftNodes());
-            _canPlacableNodes.Add(new DownLeftNodes());
-            _canPlacableNodes.Add(new DownRightNodes());
-        }
-        
-        if (_canPlacableNodes.Count > 1)
-        {
-            var currentNodeCount = _canPlacableNodes.Count;
-            return _selectedNode = _canPlacableNodes[Random.Range(0, currentNodeCount)];
-        }
-        
-        
-        if (currentNode.DirectionY.x == 0)
-        {
-            //Up node area is open, down closed
-            //_canPlacableNodes.Add(new DownNodes());
-            _canPlacableNodes.Add(new DownLeftNodes());
-            _canPlacableNodes.Add(new DownRightNodes());
-            _canPlacableNodes.Add(new UpDownNodes());
-        }
-        else if (currentNode.DirectionY.y == 0)
-        {
-            //Down node area is open, up closed 
-            //_canPlacableNodes.Add(new UpNodes());
-            _canPlacableNodes.Add(new UpRightNodes());
-            _canPlacableNodes.Add(new UpLeftNodes());
-            _canPlacableNodes.Add(new UpDownNodes());
-        }
-
-        if (_canPlacableNodes.Count > 1)
-        {
-            var currentNodeCount = _canPlacableNodes.Count;
-            return _selectedNode = _canPlacableNodes[Random.Range(0, currentNodeCount)];
-        }
-        
-        return _selectedNode = _canPlacableNodes[0];
-        
     }
     
     private NodeData<T> GetRandomNodeData<T>(int x,int y) where T: Node
