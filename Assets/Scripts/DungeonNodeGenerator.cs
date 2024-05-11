@@ -1,11 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class DungeonNodeGenerator : MonoBehaviour
@@ -458,12 +454,5 @@ public class DungeonNodeGenerator : MonoBehaviour
         }
         return false;
     }
-
-    private void SetNodePositionData(Vector2Int nodePosition)
-    {
-        foreach (var grids in _gridDataList.Where(grids => nodePosition == grids.Position))
-        {
-            grids.IsEmpty = false;
-        }
-    }
+    
 }

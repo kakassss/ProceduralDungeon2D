@@ -7,7 +7,6 @@ public class NodeData<T>
     public int PosY;
     
     public Vector2Int Position;
-    public bool IsEmpty;
     
     public NodeData(T node, int posX, int posY)
     {

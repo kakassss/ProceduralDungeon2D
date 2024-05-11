@@ -32,6 +32,4 @@ public class NodeGameObjectDataProvider : MonoBehaviour
             _ => null
         };
     }
-    
-    
 }
