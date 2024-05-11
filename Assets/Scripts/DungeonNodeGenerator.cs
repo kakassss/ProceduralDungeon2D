@@ -92,11 +92,6 @@ public class DungeonNodeGenerator : MonoBehaviour
             SelectPointNodePosition();
         }
         SetInstantiatedNodeDatas();
-
-        // for (int i = 0; i < _gridDataList.Count; i++)
-        // {
-        //     Debug.Log("GridData " + i + " " + _gridDataList[i].Position);
-        // }
     }
 
     private void SetInstantiatedNodeDatas()
@@ -177,24 +172,6 @@ public class DungeonNodeGenerator : MonoBehaviour
         }
     }
     
-    private bool CheckIsNodeExceedGridBorder(Vector2Int position)
-    {
-        foreach (var grids in _gridDataList)
-        {
-            if (position == grids.Position)
-                return true;
-        }
-        return false;
-    }
-
-    private void SetNodePositionData(Vector2Int nodePosition)
-    {
-        foreach (var grids in _gridDataList.Where(grids => nodePosition == grids.Position))
-        {
-            grids.IsEmpty = false;
-        }
-    }
-    
     private Vector2Int _currentPointPosition;
     private NodeData<Node> _currentPointNodeData;
     private Node _selectedNode;
@@ -215,7 +192,6 @@ public class DungeonNodeGenerator : MonoBehaviour
         
         Vector2Int startNodePosition = Vector2Int.zero;
         Vector2Int targetNodePosition = _currentPointPosition;
-        //Debug.Log("targetNodePosition " + targetNodePosition);
 
         List<Vector2Int> mainPathPosition = new List<Vector2Int>();
         List<NodeData<Node>> pathNodes = new List<NodeData<Node>>();
@@ -471,5 +447,23 @@ public class DungeonNodeGenerator : MonoBehaviour
     private Vector2Int GetRandomDirection()
     {
         return _directions[Random.Range(0, _directions.Length)];
+    }
+    
+    private bool CheckIsNodeExceedGridBorder(Vector2Int position)
+    {
+        foreach (var grids in _gridDataList)
+        {
+            if (position == grids.Position)
+                return true;
+        }
+        return false;
+    }
+
+    private void SetNodePositionData(Vector2Int nodePosition)
+    {
+        foreach (var grids in _gridDataList.Where(grids => nodePosition == grids.Position))
+        {
+            grids.IsEmpty = false;
+        }
     }
 }
