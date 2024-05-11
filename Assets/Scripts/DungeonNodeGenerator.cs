@@ -180,11 +180,7 @@ public class DungeonNodeGenerator : MonoBehaviour
             //Create NodesDatas and declare their positions
             for (int i = 0; i < mainPathPosition.Count; i++)
             {
-                nextNodePos += mainPathPosition[i];
-                _selectedNode = SetSelectedNodes(mainPathPosition[i],RightLeftNode,UpDownNode);
-                NodeData<Node> placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
-                placableNode.IsEmpty = false;
-                pathNodes.Add(placableNode);
+                SetNodeData(i);
             }
             
             //Get and set edgeNodes datas
@@ -193,16 +189,10 @@ public class DungeonNodeGenerator : MonoBehaviour
             //Instantiate NodeData Gameobjects
             foreach (var nodeData in pathNodes)
             {
-                nodeData.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(nodeData.node);
-                Instantiate(nodeData.node.NodeGameobject, new Vector3(nodeData.Position.x,nodeData.Position.y,0),
-                    Quaternion.identity, transform);
+                InstantiateNodeGameobject(nodeData);
             }
-            
-            // foreach (var node in pathNodes)
-            // {
-            //     Debug.Log("CurrentNode Position " + node.Position);
-            // }
         }
+        
         //An example for (1,2)
         if (posX > 0 && posY > 0)
         {
@@ -211,25 +201,19 @@ public class DungeonNodeGenerator : MonoBehaviour
             //Create NodesDatas and declare their positions
             for (int i = 0; i < mainPathPosition.Count; i++)
             {
-                nextNodePos += mainPathPosition[i];
-                _selectedNode = SetSelectedNodes(mainPathPosition[i],RightLeftNode,UpDownNode);
-                NodeData<Node> placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
-                placableNode.IsEmpty = false;
-                pathNodes.Add(placableNode);
+                SetNodeData(i);
             }
             
             //Get and set edgeNodes datas
             SetEdgeNodesDatas(UpLeftNode,LeftNode,DownNode,DownRightNode);
             
-            
             //Instantiate NodeData Gameobjects
             foreach (var nodeData in pathNodes)
             {
-                nodeData.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(nodeData.node);
-                Instantiate(nodeData.node.NodeGameobject, new Vector3(nodeData.Position.x,nodeData.Position.y,0),
-                    Quaternion.identity, transform);
+                InstantiateNodeGameobject(nodeData);
             }
         }
+        
         //An example for (-2,3)
         if (posX < 0 && posY > 0)
         {
@@ -238,25 +222,19 @@ public class DungeonNodeGenerator : MonoBehaviour
             //Create NodesDatas and declare their positions
             for (int i = 0; i < mainPathPosition.Count; i++)
             {
-                nextNodePos += mainPathPosition[i];
-                _selectedNode = SetSelectedNodes(mainPathPosition[i],RightLeftNode,UpDownNode);
-                NodeData<Node> placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
-                placableNode.IsEmpty = false;
-                pathNodes.Add(placableNode);
+                SetNodeData(i);
             }
             
             //Get and set edgeNodes datas
             SetEdgeNodesDatas(UpRightNode,RightNode,DownNode,DownLeftNode);
             
-            
             //Instantiate NodeData Gameobjects
             foreach (var nodeData in pathNodes)
             {
-                nodeData.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(nodeData.node);
-                Instantiate(nodeData.node.NodeGameobject, new Vector3(nodeData.Position.x,nodeData.Position.y,0),
-                    Quaternion.identity, transform);
+                InstantiateNodeGameobject(nodeData);
             }
         }
+        
         //An example for (-3,-5)
         if (posX < 0 && posY < 0)
         {
@@ -265,26 +243,34 @@ public class DungeonNodeGenerator : MonoBehaviour
             //Create NodesDatas and declare their positions
             for (int i = 0; i < mainPathPosition.Count; i++)
             {
-                nextNodePos += mainPathPosition[i];
-                _selectedNode = SetSelectedNodes(mainPathPosition[i],RightLeftNode,UpDownNode);
-                NodeData<Node> placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
-                placableNode.IsEmpty = false;
-                pathNodes.Add(placableNode);
+                SetNodeData(i);
             }
             
             //Get and set edgeNodes datas
             SetEdgeNodesDatas(DownRightNode,RightNode,UpNode,UpLeftNode);
             
-            
             //Instantiate NodeData Gameobjects
             foreach (var nodeData in pathNodes)
             {
-                nodeData.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(nodeData.node);
-                Instantiate(nodeData.node.NodeGameobject, new Vector3(nodeData.Position.x,nodeData.Position.y,0),
-                    Quaternion.identity, transform);
+                InstantiateNodeGameobject(nodeData);
             }
         }
-
+        
+        void InstantiateNodeGameobject(NodeData<Node> nodeData)
+        {
+            nodeData.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(nodeData.node);
+            Instantiate(nodeData.node.NodeGameobject, new Vector3(nodeData.Position.x,nodeData.Position.y,0),
+                Quaternion.identity, transform);
+        }
+        
+        void SetNodeData(int i)
+        {
+            nextNodePos += mainPathPosition[i];
+            _selectedNode = SetSelectedNodes(mainPathPosition[i],RightLeftNode,UpDownNode);
+            NodeData<Node> placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
+            placableNode.IsEmpty = false;
+            pathNodes.Add(placableNode);
+        }
 
         void SetEdgeNodesDatas(Node xNodeTrue,Node xNodeFalse,Node yNodeTrue, Node yNodeFalse)
         {
