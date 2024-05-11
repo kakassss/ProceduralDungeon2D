@@ -10,30 +10,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1059708678629029236, guid: 0f432afe98a2c8e4bbb908d3fcb47984, type: 3}
       propertyPath: m_Name
-      value: Dungeon_Node_DownOpen
-      objectReference: {fileID: 0}
-    - target: {fileID: 4396395258560724248, guid: 0f432afe98a2c8e4bbb908d3fcb47984, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4396395258560724248, guid: 0f432afe98a2c8e4bbb908d3fcb47984, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4396395258560724248, guid: 0f432afe98a2c8e4bbb908d3fcb47984, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
+      value: Dungeon_Node_Down_PartialOpen
       objectReference: {fileID: 0}
     - target: {fileID: 4396395258560724248, guid: 0f432afe98a2c8e4bbb908d3fcb47984, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4396395258560724248, guid: 0f432afe98a2c8e4bbb908d3fcb47984, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4396395258560724248, guid: 0f432afe98a2c8e4bbb908d3fcb47984, type: 3}
-      propertyPath: m_LocalRotation.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4396395258560724248, guid: 0f432afe98a2c8e4bbb908d3fcb47984, type: 3}

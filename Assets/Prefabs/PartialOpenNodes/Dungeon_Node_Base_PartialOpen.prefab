@@ -463,35 +463,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 367895415341021566, guid: c8602fd2c5a94724ea4d67e3accd7a7d, type: 3}
       propertyPath: m_Name
-      value: Dungeon_Node_Base_Open
-      objectReference: {fileID: 0}
-    - target: {fileID: 3939791720615031058, guid: c8602fd2c5a94724ea4d67e3accd7a7d, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3939791720615031058, guid: c8602fd2c5a94724ea4d67e3accd7a7d, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3939791720615031058, guid: c8602fd2c5a94724ea4d67e3accd7a7d, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
+      value: Dungeon_Node_Base_PartialOpen
       objectReference: {fileID: 0}
     - target: {fileID: 3939791720615031058, guid: c8602fd2c5a94724ea4d67e3accd7a7d, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3939791720615031058, guid: c8602fd2c5a94724ea4d67e3accd7a7d, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3939791720615031058, guid: c8602fd2c5a94724ea4d67e3accd7a7d, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3939791720615031058, guid: c8602fd2c5a94724ea4d67e3accd7a7d, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3939791720615031058, guid: c8602fd2c5a94724ea4d67e3accd7a7d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
