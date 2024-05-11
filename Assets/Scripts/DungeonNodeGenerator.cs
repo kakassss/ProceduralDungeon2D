@@ -164,7 +164,7 @@ public class DungeonNodeGenerator : MonoBehaviour
             return RightCloseNode;
         }
 
-        return currentNode.node; // It returns self
+        return currentNode.node; // Todo: refactor 
     }
     private void GridDataConvertToList()
     {
