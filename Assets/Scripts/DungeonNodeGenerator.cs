@@ -78,6 +78,11 @@ public class DungeonNodeGenerator : MonoBehaviour
 
         GridDataConvertToList();
         SelectPointNodePosition();
+
+        // for (int i = 0; i < _gridDataList.Count; i++)
+        // {
+        //     Debug.Log("GridData " + i + " " + _gridDataList[i].Position);
+        // }
     }
 
     private void GridDataConvertToList()
@@ -151,108 +156,143 @@ public class DungeonNodeGenerator : MonoBehaviour
     
     private Vector2Int _currentPointPosition;
     private NodeData<Node> _currentPointNodeData;
+    private Node _selectedNode;
+
+    private Node SetSelectedNodes(Vector2Int nodeDirection)
+    {
+        if (nodeDirection.x is 1 or -1 && nodeDirection.y == 0)
+        {
+            return new RightLeftNodes();
+        }
+        
+        if (nodeDirection.y is 1 or -1 && nodeDirection.x == 0)
+        {
+            return new UpDownNodes();
+        }
+        
+        Debug.LogError("CenterNode has returned!");
+        return new CenterNodes();
+    }
+    
     private void SelectPointNodePosition()
     {
-        var randomGridData = Random.Range(0, _gridDataList.Count);
-        _currentPointNodeData = _gridDataList[100];
+        //var randomGridData = Random.Range(0, _gridDataList.Count);
+        var minRandomGridData = Random.Range(0 ,34);   // These array groups has a bigger numbers except 
+        var maxRandomGridData = Random.Range(86, 120); // other them.
+        _currentPointNodeData = _gridDataList[100]; // ---> (4,-4)
         _currentPointPosition = _currentPointNodeData.Position;
         
-        Vector2Int _startNodePosition = Vector2Int.zero;
-        Vector2Int _targetNodePosition = _currentPointPosition;
+        Vector2Int startNodePosition = Vector2Int.zero;
+        Vector2Int targetNodePosition = _currentPointPosition;
         
-        Debug.Log("current point " + _currentPointPosition);
 
-        List<Vector2Int> _pathPositionX = new List<Vector2Int>();
-        List<Vector2Int> _pathPositionY = new List<Vector2Int>();
-        List<Vector2Int> _mainPathPosition = new List<Vector2Int>();
-        Vector2Int _corridorPosition;
-        Node _randomCorridorNode;
-        Node _corridorNode;
-        int counter = 0;
-        var nextNodePos = _pointZero;
-        // new UpRightNodes(),    // 0,1 
-        // new DownLeftNodes(),
-        List<NodeData<Node>> nodesss = new List<NodeData<Node>>();
+        List<Vector2Int> mainPathPosition = new List<Vector2Int>();
+        List<NodeData<Node>> pathNodes = new List<NodeData<Node>>();
+        Vector2Int corridorPosition;
+        
+        Node corridorNode;
+        int nodeDataIndexCounter = 0;
+        var nextNodePos = startNodePosition;
+        
+        
+        NodeData<CenterNodes> centerNode = GetNodeDataFromNode<CenterNodes>(_selectedNode, nextNodePos.x, nextNodePos.y);
+        centerNode.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(centerNode.node);
+                    
+        Instantiate(centerNode.node.NodeGameobject, new Vector3(centerNode.Position.x,centerNode.Position.y,0),
+            Quaternion.identity, transform);
+        
+        
         // Assuming target vector be like (1,2) (-2,3) (-3,-5) (2,-4)
-        if (_targetNodePosition.x != 0 && _targetNodePosition.y != 0)
+        if (targetNodePosition.x == 0 || targetNodePosition.y == 0) return;
+        
+        var posX = targetNodePosition.x;
+        var posY = targetNodePosition.y;
+        
+        //An example for (4,-4)
+        if (posX > 0 && posY < 0)
         {
-            var posX = _targetNodePosition.x;
-            var posY = _targetNodePosition.y;
-            //An example for (4,-4)
-            if (posX > 0 && posY < 0)
+            corridorNode = _coordinateUpLeft[0];
+                
+            if (corridorNode.GetType() == typeof(UpRightNodes))
             {
-                //Random.Range(0,1)
-                _corridorNode = _coordinateUpLeft[0];
-                
-                
-                if (_corridorNode.GetType() == typeof(UpRightNodes))
+                corridorPosition = new Vector2Int(1, 0);
+                targetNodePosition -= corridorPosition;
+                    
+                for (int i = 0; i < targetNodePosition.x; i++)
                 {
-                    _corridorPosition = new Vector2Int(1, 0);
-                    _targetNodePosition -= _corridorPosition;
-                    
-                    for (int i = 0; i < _targetNodePosition.x; i++)
-                    {
-                        _mainPathPosition.Add(new Vector2Int(1,0));
-                    }
-
-                    _mainPathPosition.Add(_corridorPosition);
-                    
-                    for (int i = 0; i < Mathf.Abs(_targetNodePosition.y); i++)
-                    {
-                        _mainPathPosition.Add(new Vector2Int(0,-1));
-                    }
-
-                    // foreach (var node in _mainPathPosition)
-                    // {
-                    //     Debug.Log("NodePosition " + node);
-                    // }
-
-                    for (int i = 0; i < _mainPathPosition.Count; i++)
-                    {
-                        nextNodePos += _mainPathPosition[counter];
-                        NodeData<Node> placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
-                        counter++;
-                        nodesss.Add(placableNode);
-                    }
-
-
-                    foreach (var node in nodesss)
-                    {
-                        Debug.Log("CurrentNode Position " + node.Position);
-                    }
+                    mainPathPosition.Add(new Vector2Int(1,0));
                 }
-
-                if (_corridorNode.GetType() == typeof(DownLeftNodes))
+                    
+                mainPathPosition.Add(corridorPosition);
+                
+                
+                for (int i = 0; i < Mathf.Abs(targetNodePosition.y); i++)
                 {
+                    mainPathPosition.Add(new Vector2Int(0,-1));
+                } 
+
+                
+                //Create NodesDatas and declare their positions
+                for (int i = 0; i < mainPathPosition.Count; i++)
+                {
+                    nextNodePos += mainPathPosition[i];
+                    _selectedNode = SetSelectedNodes(mainPathPosition[i]);
+                    NodeData<Node> placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
+                    nodeDataIndexCounter++;
+                    pathNodes.Add(placableNode);
                     
                 }
+                
+                foreach (var nodePos in mainPathPosition)
+                {
+                    
+                    
+                    
+                }
+                
+                //Instantiate NodeData Gameobjects
+                foreach (var nodeData in pathNodes)
+                {
+                    nodeData.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(nodeData.node);
+                    Instantiate(nodeData.node.NodeGameobject, new Vector3(nodeData.Position.x,nodeData.Position.y,0),
+                        Quaternion.identity, transform);
+                }
+                
+                foreach (var node in pathNodes)
+                {
+                    Debug.Log("CurrentNode Position " + node.Position);
+                }
+            }
+
+            if (corridorNode.GetType() == typeof(DownLeftNodes))
+            {
+                    
+            }
 
                 
                 
 
-            }
-            //An example for (1,2)
-            if (posX > 0 && posY > 0)
-            {
+        }
+        //An example for (1,2)
+        if (posX > 0 && posY > 0)
+        {
                 
-            }
-            //An example for (-2,3)
-            if (posX < 0 && posY > 0)
-            {
+        }
+        //An example for (-2,3)
+        if (posX < 0 && posY > 0)
+        {
                 
-            }
-            //An example for (-3,-5)
-            if (posX < 0 && posY < 0)
-            {
+        }
+        //An example for (-3,-5)
+        if (posX < 0 && posY < 0)
+        {
                 
-            }
-
         }
 
     }
     
     
-    private Node _selectedNode;
+    
     private IEnumerator CreateDungeon()
     {
         // NodeData<CenterNodes> initNode = new NodeData<CenterNodes>(new CenterNodes(),_pointZero.x,_pointZero.y);
@@ -314,7 +354,6 @@ public class DungeonNodeGenerator : MonoBehaviour
             
             //nodeDataList.Add(randomNodeData);
             
-            Debug.Log("nextNode2 " + _nodePositionsList[i].x + " " + " " + _nodePositionsList[i].y);
             Instantiate(currentNodeData.node.NodeGameobject, 
                 new Vector3(_nodePositionsList[i].x,_nodePositionsList[i].y,0),
                 Quaternion.identity, transform);

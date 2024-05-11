@@ -26,16 +26,4 @@ public static class NodeHelperMethods
         Debug.LogError("At Given Position NodeData can not found");
         return null;
     }
-
-    public static Node GetNodeType(Node currentNode)
-    {
-        return AllNodeTypes.Any(nodes => currentNode == nodes) ? currentNode : new Node();
-    }
-    
-    private static Node[] AllNodeTypes =
-    {
-        new UpNodes(), new DownNodes(), new RightNodes(), new LeftNodes(),
-        new UpDownNodes(),new UpRightNodes(),new UpLeftNodes(),new DownLeftNodes (),
-        new DownRightNodes(),new RightLeftNodes()
-    };
 }
