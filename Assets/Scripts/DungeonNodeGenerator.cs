@@ -86,12 +86,11 @@ public class DungeonNodeGenerator : MonoBehaviour
         }
 
         GridDataConvertToList();
+        
         for (int i = 0; i < _iterationCount; i++)
         {
             SelectPointNodePosition();
         }
-
-        //Debug.Log("_allInstantiatedNodes " + _allInstantiatedNodes.Count);
         SetInstantiatedNodeDatas();
 
         // for (int i = 0; i < _gridDataList.Count; i++)
@@ -203,21 +202,9 @@ public class DungeonNodeGenerator : MonoBehaviour
     private List<Node> _yNodes;
     private int _totalGridCount;
     
-    /*
-     * İyi gibi gidiyoruz sanırım, öncesinde neyden kacmak istediysek yine ordayız :D
-     * yani gene rastgelelik yaptgımız için koordinat sisteminin 4 tarafından birinde 1den fazla
-     * path oluşmaya kalkarsa direkt olarak üstüste biniyor.
-     * şimdi düşündüğün şey şu acaba her birinin içinde instantiate etmekdense
-     * pozisyonları biriktirip öyle mi instantiate etmeliyiz.
-     *
-     * ya da en son instantiate olduktan sonra hepsini dev bi listede toplayıp sağ solunu tarattırıp
-     * etrafında ne kadar node varsa ona doğru bir yeni node a mı çevirmeliyiz
-     * yani 4 tarafında varsa center
-     * 3 tarafında varsa eksik olan kapalı diğer taraflar açık gibi
-     * IsEmpty bir iş yapmayacak gibi
-     */
     List<NodeData<Node>> _allInstantiatedNodes = new List<NodeData<Node>>();
     List<GameObject> _allInstantiatedNodesGO = new List<GameObject>();
+    
     private void SelectPointNodePosition()
     {
         //var randomGridData = Random.Range(0, _gridDataList.Count);
