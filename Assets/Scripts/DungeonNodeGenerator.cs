@@ -30,6 +30,20 @@ public class DungeonNodeGenerator : MonoBehaviour
     private int _halfOfWidth;
     private int _halfOfHeight;
 
+
+    public Node UpNode { get; private set; } = new UpNodes();
+    public Node DownNode { get; private set; } = new DownNodes();
+    public Node LeftNode { get; private set; } = new LeftNodes();
+    public Node RightNode { get; private set; } = new RightNodes();
+    public Node UpDownNode { get; private set; } = new UpDownNodes();
+    public Node UpRightNode { get; private set; } = new UpRightNodes();
+    public Node UpLeftNode { get; private set; } = new UpLeftNodes();
+    public Node DownLeftNode { get; private set; } = new DownLeftNodes();
+    public Node DownRightNode { get; private set; } = new DownRightNodes();
+    public Node RightLeftNode { get; private set; } = new RightLeftNodes();
+    
+
+
     private int _totalGridCount = 0;
     
     private readonly Type[] _allNodeTypes =
@@ -218,10 +232,10 @@ public class DungeonNodeGenerator : MonoBehaviour
         //An example for (4,-4)
         if (posX > 0 && posY < 0)
         {
-            corridorNode = _coordinateUpLeft[0];
-                
-            if (corridorNode.GetType() == typeof(UpRightNodes))
-            {
+            // corridorNode = _coordinateUpLeft[0];
+            //     
+            // if (corridorNode.GetType() == typeof(UpRightNodes))
+            // {
                 corridorPosition = new Vector2Int(1, 0);
                 targetNodePosition -= corridorPosition;
                 
@@ -235,11 +249,12 @@ public class DungeonNodeGenerator : MonoBehaviour
                     NodeData<Node> placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
                     pathNodes.Add(placableNode);
                 }
-                Debug.Log("xnodes " + _xNodes.Count);
+                
+                //Get and set edgeNodes datas
                 var xEdgeNode = pathNodes[_xNodes.Count-1];
-                xEdgeNode.node = cornerSelect ? new DownLeftNodes() : new UpRightNodes();
+                xEdgeNode.node = cornerSelect ? DownLeftNode : UpRightNode;
                 var yEdgeNode = pathNodes[^1];
-                yEdgeNode.node = cornerSelect ? new UpNodes() : new LeftNodes();
+                yEdgeNode.node = cornerSelect ? UpNode: LeftNode;
                 
                 //Instantiate NodeData Gameobjects
                 foreach (var nodeData in pathNodes)
@@ -253,16 +268,13 @@ public class DungeonNodeGenerator : MonoBehaviour
                 {
                     Debug.Log("CurrentNode Position " + node.Position);
                 }
-            }
+            //}
 
-            if (corridorNode.GetType() == typeof(DownLeftNodes))
-            {
-                    
-            }
-
-                
-                
-
+            // if (corridorNode.GetType() == typeof(DownLeftNodes))
+            // {
+            //         
+            // }
+            
         }
         //An example for (1,2)
         if (posX > 0 && posY > 0)
@@ -388,6 +400,8 @@ public class DungeonNodeGenerator : MonoBehaviour
     }
 
     private List<NodeData<Node>> neighboorNodeDatas;
+
+    [SerializeField] private Node _upNodes;
     // private Node CheckOpenTransformPositions<T>(NodeData<T> currentNode) where T : Node
     // {
     //     neighboorNodeDatas = new List<NodeData<Node>>();
