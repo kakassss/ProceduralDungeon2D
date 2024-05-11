@@ -39,3 +39,11 @@ MonoBehaviour:
     - NodeGameobject: {fileID: 4099568209843855884, guid: 73a9145435662184da0417a4166fb621, type: 3}
     RightLeftNodesList:
     - NodeGameobject: {fileID: 4099568209843855884, guid: 99eb60d3c6410fc44ac7bb4cacb2b61a, type: 3}
+    UpCloseNodesList:
+    - NodeGameobject: {fileID: 4879765699909381705, guid: 209cd66baeed20a4496317708ba4089f, type: 3}
+    DownCloseNodesList:
+    - NodeGameobject: {fileID: 4879765699909381705, guid: fe124df1d293dd340bb77ce0a0630df5, type: 3}
+    LeftCloseNodesList:
+    - NodeGameobject: {fileID: 4879765699909381705, guid: ca43b51d0b9ffd248a87566319e185bc, type: 3}
+    RightCloseNodesList:
+    - NodeGameobject: {fileID: 4879765699909381705, guid: 5c39b90c1db961747b890bdec6ccb3fd, type: 3}

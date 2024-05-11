@@ -187,3 +187,40 @@ public class RightLeftNodes : NodeCorridor
         Direction.DirectionY = new Vector2Int(1,1);
     }
 }
+
+[Serializable]
+public class UpCloseNodes : NodeCorridor
+{
+    public UpCloseNodes()
+    {
+        Direction.DirectionX = new Vector2Int(0,0);
+        Direction.DirectionY = new Vector2Int(1,0);
+    }
+}
+[Serializable]
+public class DownCloseNodes : NodeCorridor
+{
+    public DownCloseNodes()
+    {
+        Direction.DirectionX = new Vector2Int(0,0);
+        Direction.DirectionY = new Vector2Int(0,1);
+    }
+}
+[Serializable]
+public class RightCloseNodes : NodeCorridor
+{
+    public RightCloseNodes()
+    {
+        Direction.DirectionX = new Vector2Int(0,1);
+        Direction.DirectionY = new Vector2Int(0,0);
+    }
+}
+[Serializable]
+public class LeftCloseNodes : NodeCorridor
+{
+    public LeftCloseNodes()
+    {
+        Direction.DirectionX = new Vector2Int(1,0);
+        Direction.DirectionY = new Vector2Int(0,0);
+    }
+}

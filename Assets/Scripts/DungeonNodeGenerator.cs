@@ -36,7 +36,10 @@ public class DungeonNodeGenerator : MonoBehaviour
     public Node DownLeftNode { get; private set; } = new DownLeftNodes();
     public Node DownRightNode { get; private set; } = new DownRightNodes();
     public Node RightLeftNode { get; private set; } = new RightLeftNodes();
-    
+    public Node UpCloseNode { get; private set; } = new UpCloseNodes();
+    public Node DownCloseNode { get; private set; } = new DownCloseNodes();
+    public Node RightCloseNode { get; private set; } = new RightCloseNodes();
+    public Node LeftCloseNode { get; private set; } = new LeftCloseNodes();
     
     private readonly Type[] _allNodeTypes =
     {
@@ -88,12 +91,82 @@ public class DungeonNodeGenerator : MonoBehaviour
             SelectPointNodePosition();
         }
 
+        //Debug.Log("_allInstantiatedNodes " + _allInstantiatedNodes.Count);
+        SetInstantiatedNodeDatas();
+
         // for (int i = 0; i < _gridDataList.Count; i++)
         // {
         //     Debug.Log("GridData " + i + " " + _gridDataList[i].Position);
         // }
     }
 
+    private void SetInstantiatedNodeDatas()
+    {
+        for (int i = 0; i < _allInstantiatedNodes.Count; i++)
+        {
+            _allInstantiatedNodes[i].node = SetNodeAfterInstatiated(_allInstantiatedNodes[i],i);
+            _allInstantiatedNodes[i].node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(_allInstantiatedNodes[i].node);
+            var go = Instantiate(_allInstantiatedNodes[i].node.NodeGameobject, new Vector3(_allInstantiatedNodes[i].Position.x,_allInstantiatedNodes[i].Position.y,0),
+                Quaternion.identity, transform);
+        }
+    }
+    
+    private Node SetNodeAfterInstatiated(NodeData<Node> currentNode, int currentIndex)
+    {
+        var UpNodePos = currentNode.Position + Vector2Int.up;
+        var DownNodePos = currentNode.Position + Vector2Int.down;
+        var LeftNodePos = currentNode.Position + Vector2Int.left;
+        var RightNodePos = currentNode.Position + Vector2Int.right;
+        
+        Debug.Log("currentNode name " + currentNode.node);
+        Debug.Log("currentNode " + currentNode.Position);
+        Debug.Log("UpNodePos " + UpNodePos);
+        Debug.Log("DownNodePos " + DownNodePos);
+        Debug.Log("LeftNodePos " + LeftNodePos);
+        Debug.Log("RightNodePos " + RightNodePos);
+        
+        Debug.Log("------------------------------------------");
+        
+        var upNodeData = NodeHelperMethods.GetNodeAtXPosition(UpNodePos, _allInstantiatedNodes);
+        var downNodeData = NodeHelperMethods.GetNodeAtXPosition(DownNodePos, _allInstantiatedNodes);
+        var leftNodeData = NodeHelperMethods.GetNodeAtXPosition(LeftNodePos, _allInstantiatedNodes);
+        var rightNodeData = NodeHelperMethods.GetNodeAtXPosition(RightNodePos, _allInstantiatedNodes);
+        
+        Debug.Log("upNodeData " + upNodeData.IsUnityNull());
+        Debug.Log("downNodeData " + downNodeData.IsUnityNull());
+        Debug.Log("leftNodeData " + leftNodeData.IsUnityNull());
+        Debug.Log("rightNodeData " + rightNodeData.IsUnityNull());
+        
+        Debug.Log("------------------------------------------");
+
+        if (upNodeData != null && downNodeData != null && leftNodeData != null && rightNodeData != null)
+        {
+            Destroy(_allInstantiatedNodesGO[currentIndex]);
+            return CenterNode;
+        }
+        if (downNodeData != null && leftNodeData != null && rightNodeData != null)
+        {
+            Destroy(_allInstantiatedNodesGO[currentIndex]);
+            return UpCloseNode;
+        }
+        if (upNodeData != null && leftNodeData != null && rightNodeData != null)
+        {
+            Destroy(_allInstantiatedNodesGO[currentIndex]);
+            return DownCloseNode;
+        }
+        if (upNodeData != null && downNodeData != null  && rightNodeData != null)
+        {
+            Destroy(_allInstantiatedNodesGO[currentIndex]);
+            return LeftCloseNode;
+        }
+        if (upNodeData != null && downNodeData != null && leftNodeData != null)
+        {
+            Destroy(_allInstantiatedNodesGO[currentIndex]);
+            return RightCloseNode;
+        }
+
+        return currentNode.node; // It returns self
+    }
     private void GridDataConvertToList()
     {
         for (int i = -_halfOfWidth; i <= _halfOfWidth; i++)
@@ -129,7 +202,22 @@ public class DungeonNodeGenerator : MonoBehaviour
     private List<Node> _xNodes;
     private List<Node> _yNodes;
     private int _totalGridCount;
-
+    
+    /*
+     * İyi gibi gidiyoruz sanırım, öncesinde neyden kacmak istediysek yine ordayız :D
+     * yani gene rastgelelik yaptgımız için koordinat sisteminin 4 tarafından birinde 1den fazla
+     * path oluşmaya kalkarsa direkt olarak üstüste biniyor.
+     * şimdi düşündüğün şey şu acaba her birinin içinde instantiate etmekdense
+     * pozisyonları biriktirip öyle mi instantiate etmeliyiz.
+     *
+     * ya da en son instantiate olduktan sonra hepsini dev bi listede toplayıp sağ solunu tarattırıp
+     * etrafında ne kadar node varsa ona doğru bir yeni node a mı çevirmeliyiz
+     * yani 4 tarafında varsa center
+     * 3 tarafında varsa eksik olan kapalı diğer taraflar açık gibi
+     * IsEmpty bir iş yapmayacak gibi
+     */
+    List<NodeData<Node>> _allInstantiatedNodes = new List<NodeData<Node>>();
+    List<GameObject> _allInstantiatedNodesGO = new List<GameObject>();
     private void SelectPointNodePosition()
     {
         //var randomGridData = Random.Range(0, _gridDataList.Count);
@@ -140,7 +228,7 @@ public class DungeonNodeGenerator : MonoBehaviour
         
         Vector2Int startNodePosition = Vector2Int.zero;
         Vector2Int targetNodePosition = _currentPointPosition;
-        Debug.Log("targetNodePosition " + targetNodePosition);
+        //Debug.Log("targetNodePosition " + targetNodePosition);
 
         List<Vector2Int> mainPathPosition = new List<Vector2Int>();
         List<NodeData<Node>> pathNodes = new List<NodeData<Node>>();
@@ -250,8 +338,9 @@ public class DungeonNodeGenerator : MonoBehaviour
         void InstantiateNodeGameobject(NodeData<Node> nodeData)
         {
             nodeData.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(nodeData.node);
-            Instantiate(nodeData.node.NodeGameobject, new Vector3(nodeData.Position.x,nodeData.Position.y,0),
+            var currentNodeGO =  Instantiate(nodeData.node.NodeGameobject, new Vector3(nodeData.Position.x,nodeData.Position.y,0),
                 Quaternion.identity, transform);
+            _allInstantiatedNodesGO.Add(currentNodeGO);
         }
         
         void SetNodeData(int i)
@@ -259,8 +348,8 @@ public class DungeonNodeGenerator : MonoBehaviour
             nextNodePos += mainPathPosition[i];
             _selectedNode = SetSelectedNodes(mainPathPosition[i],RightLeftNode,UpDownNode);
             NodeData<Node> placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
-            placableNode.IsEmpty = false;
             pathNodes.Add(placableNode);
+            _allInstantiatedNodes.Add(placableNode);
         }
 
         void SetEdgeNodesDatas(Node xNodeTrue,Node xNodeFalse,Node yNodeTrue, Node yNodeFalse)
@@ -368,7 +457,6 @@ public class DungeonNodeGenerator : MonoBehaviour
         NodeData<T> _nodeData = new NodeData<T>((T)Activator.CreateInstance(_tpyeNode), posX, posY);
         return _nodeData;
     }
-
     
     private Type SelectRandomNode()
     {

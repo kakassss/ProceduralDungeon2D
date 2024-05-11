@@ -11,6 +11,7 @@ public class NodeGameObjectDataProvider : MonoBehaviour
         return node switch
         {
             CenterNodes => nodeDatas.GetCurrentNode(nodeDatas.CenterNodesList),
+            
             UpNodes => nodeDatas.GetCurrentNode(nodeDatas.UpNodesList),
             DownNodes => nodeDatas.GetCurrentNode(nodeDatas.DownNodesList),
             LeftNodes => nodeDatas.GetCurrentNode(nodeDatas.LeftNodesList),
@@ -22,6 +23,11 @@ public class NodeGameObjectDataProvider : MonoBehaviour
             DownLeftNodes => nodeDatas.GetCurrentNode(nodeDatas.DownLeftNodesList),
             DownRightNodes => nodeDatas.GetCurrentNode(nodeDatas.DownRightNodesList),
             RightLeftNodes => nodeDatas.GetCurrentNode(nodeDatas.RightLeftNodesList),
+            
+            UpCloseNodes => nodeDatas.GetCurrentNode(nodeDatas.UpCloseNodesList),
+            DownCloseNodes => nodeDatas.GetCurrentNode(nodeDatas.DownCloseNodesList),
+            RightCloseNodes => nodeDatas.GetCurrentNode(nodeDatas.RightCloseNodesList),
+            LeftCloseNodes => nodeDatas.GetCurrentNode(nodeDatas.LeftCloseNodesList),
             
             _ => null
         };
