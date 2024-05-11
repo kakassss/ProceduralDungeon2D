@@ -5574,7 +5574,7 @@ MonoBehaviour:
   Width: 10
   Height: 10
   corridorNodeRate: 0.2
-  _iterationCount: 90
+  _iterationCount: 33
 --- !u!4 &1294367091 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3939791720615031058, guid: c8602fd2c5a94724ea4d67e3accd7a7d, type: 3}

@@ -91,12 +91,15 @@ public class DungeonNodeGenerator : MonoBehaviour
         }
 
         GridDataConvertToList();
-        SelectPointNodePosition();
-
-        for (int i = 0; i < _gridDataList.Count; i++)
+        for (int i = 0; i < _iterationCount; i++)
         {
-            Debug.Log("GridData " + i + " " + _gridDataList[i].Position);
+            SelectPointNodePosition();
         }
+
+        // for (int i = 0; i < _gridDataList.Count; i++)
+        // {
+        //     Debug.Log("GridData " + i + " " + _gridDataList[i].Position);
+        // }
     }
 
     private void GridDataConvertToList()
@@ -127,78 +130,19 @@ public class DungeonNodeGenerator : MonoBehaviour
             grids.IsEmpty = false;
         }
     }
-    /*
-     *  GOING TO REVISION ON MAIN MECHANIC  
-     *  Normalde pozisyonları 0,0'dan başlatarak random vectorler ekleyerek ilerletirdin.
-     *  Günün sonunda hep random node yerleştirme düşünerek yaptıgımızdan dolayı, şimdi fark ediyoruz ki
-     *  bunları birleştirmek zor, yani günün sonunda hepsi centerNode olur.
-     *  Hepsi kendi çevresine baktıgında en mantıklısı centerNode oluyor, eğer koridor mantıgı gelirse
-     *  diğer tarafdakiler patlıyor.
-     *
-     *
-     * şuan yapmak istediğin şu
-     * grid data listinden random bir node çekeceksin atıyorum, (5,4) node'u geldi
-     * 0,0'dan oraya gitmen için bi path oluşacak, işte örnek olarak
-     * 1,0 1,0 1,0 1,0 1,0 0,1 0,1 0,1 0,1 0,1 = 5,4 gibi
-     * 5 tane rightToLeft corridor 1 tane right up 3 tane updown corridor'dan oluşacak
-     * bunu 5-6 kere tekrar ediceksin.
-     * günün sonunda 5,4 çıkmalı bu vectorlerın toplamı buraya dikkat et
-     * örnek videodaki adamın algoritması böyle gibi gözüküyor
-     * centernode hep ortada, 3-4 tane path var bunlar birbirini tamamlıyor ve birbirine ellemiyor.
-     * 
-     */
-    private readonly Node[] _coordinateUpRight = 
-    {                                               
-        new DownRightNodes(),    // 0,1 
-        new UpLeftNodes(),  // 0,-1 
-    };
-    private readonly Node[] _coordinateUpLeft = 
-    {                                               
-        new UpRightNodes(),    // 0,1 
-        new DownLeftNodes(),  // 0,-1 
-    };
-    private readonly Vector2Int[] _coordinateDownRight = 
-    {                                               
-        Vector2Int.up,    // 0,1 
-        Vector2Int.down,  // 0,-1 
-    };
-    private readonly Vector2Int[] _coordinateDownLeft = 
-    {                                               
-        Vector2Int.up,    // 0,1 
-        Vector2Int.down,  // 0,-1 
-    };
     
     private Vector2Int _currentPointPosition;
     private NodeData<Node> _currentPointNodeData;
     private Node _selectedNode;
-    private List<Node> _xNodes = new();
-    private List<Node> _yNodes = new();
-
-    private Node SetSelectedNodes(Vector2Int nodeDirection,Node xNode,Node yNode)
-    {
-        if (nodeDirection.x is 1 or -1 && nodeDirection.y == 0)
-        {
-            _xNodes.Add(xNode);
-            return xNode;
-        }
-        
-        if (nodeDirection.y is 1 or -1 && nodeDirection.x == 0)
-        {
-            _yNodes.Add(yNode);
-            return yNode;
-        }
-        
-        Debug.LogError("CenterNode has returned!");
-        return CenterNode;
-    }
-    
+    private List<Node> _xNodes;
+    private List<Node> _yNodes;
     
     private void SelectPointNodePosition()
     {
         //var randomGridData = Random.Range(0, _gridDataList.Count);
         var minRandomGridData = Random.Range(0 ,34);   // These array groups has a bigger numbers except 
         var maxRandomGridData = Random.Range(86, 120); // other them.
-        _currentPointNodeData = _gridDataList[11]; // ---> (4,-4)
+        _currentPointNodeData = _gridDataList[Random.Range(0,120)]; // Random.Range(minRandomGridData,maxRandomGridData)
         _currentPointPosition = _currentPointNodeData.Position;
         
         Vector2Int startNodePosition = Vector2Int.zero;
@@ -207,9 +151,11 @@ public class DungeonNodeGenerator : MonoBehaviour
 
         List<Vector2Int> mainPathPosition = new List<Vector2Int>();
         List<NodeData<Node>> pathNodes = new List<NodeData<Node>>();
+        _xNodes = new List<Node>();
+        _yNodes = new List<Node>();
         Vector2Int corridorPosition;
-        
-        Node corridorNode;
+
+        _selectedNode = CenterNode;
         var nextNodePos = startNodePosition;
         int corner = Random.Range(0,2);
         bool cornerSelect = corner == 0;
@@ -233,7 +179,6 @@ public class DungeonNodeGenerator : MonoBehaviour
         var posX = targetNodePosition.x;
         var posY = targetNodePosition.y;
         
-        cornerSelect = false;
         
         //An example for (4,-4)
         if (posX > 0 && posY < 0)
@@ -356,7 +301,6 @@ public class DungeonNodeGenerator : MonoBehaviour
             }
             else
             {
-                Debug.Log("ynodes " + _yNodes.Count);
                 var yEdgeNode = pathNodes[_yNodes.Count -1];
                 yEdgeNode.node = cornerSelect ? yNodeTrue: yNodeFalse;
                 var xEdgeNode = pathNodes[^1];
@@ -368,151 +312,58 @@ public class DungeonNodeGenerator : MonoBehaviour
         {
             if (cornerSelect)
             {
-                corridorPosition = new Vector2Int(1, 0);
+                corridorPosition = new Vector2Int(corridorTrue, 0);
                 targetNodePosition -= corridorPosition;
                 
                 for (int i = 0; i < Mathf.Abs(targetNodePosition.x); i++)
                 {
-                    mainPathPosition.Add(new Vector2Int(1,0));
+                    mainPathPosition.Add(new Vector2Int(xPosTrue,0));
                 }
                     
                 mainPathPosition.Add(corridorPosition);
                 
                 for (int i = 0; i < Mathf.Abs(targetNodePosition.y); i++)
                 {
-                    mainPathPosition.Add(new Vector2Int(0,-1));
+                    mainPathPosition.Add(new Vector2Int(0,yPosTrue));
                 }
             }
             else
             {
-                corridorPosition = new Vector2Int(0, -1);
+                corridorPosition = new Vector2Int(0, corridorFalse);
                 targetNodePosition -= corridorPosition;
                 
                 for (int i = 0; i < Mathf.Abs(targetNodePosition.y); i++)
                 {
-                    mainPathPosition.Add(new Vector2Int(0,-1));
+                    mainPathPosition.Add(new Vector2Int(0,xPosFalse));
                 }
                     
                 mainPathPosition.Add(corridorPosition);
                     
                 for (int i = 0; i < Mathf.Abs(targetNodePosition.x); i++)
                 {
-                    mainPathPosition.Add(new Vector2Int(1,0));
+                    mainPathPosition.Add(new Vector2Int(yPosFalse,0));
                 }
             }
         }
-        void SetTargetPositionNodes2()
+        
+    }
+    
+    private Node SetSelectedNodes(Vector2Int nodeDirection,Node xNode,Node yNode)
+    {
+        if (nodeDirection.x is 1 or -1 && nodeDirection.y == 0)
         {
-            if (cornerSelect)
-            {
-                corridorPosition = new Vector2Int(1, 0);
-                targetNodePosition -= corridorPosition;
-                
-                for (int i = 0; i < targetNodePosition.x; i++)
-                {
-                    mainPathPosition.Add(new Vector2Int(1,0));
-                }
-                    
-                mainPathPosition.Add(corridorPosition);
-                
-                for (int i = 0; i < Mathf.Abs(targetNodePosition.y); i++)
-                {
-                    mainPathPosition.Add(new Vector2Int(0,1));
-                }
-            }
-            else
-            {
-                corridorPosition = new Vector2Int(0, 1);
-                targetNodePosition -= corridorPosition;
-                
-                for (int i = 0; i < targetNodePosition.y; i++)
-                {
-                    mainPathPosition.Add(new Vector2Int(0,1));
-                }
-                    
-                mainPathPosition.Add(corridorPosition);
-                    
-                for (int i = 0; i < targetNodePosition.x; i++)
-                {
-                    mainPathPosition.Add(new Vector2Int(1,0));
-                }
-            }
+            _xNodes.Add(xNode);
+            return xNode;
         }
-        void SetTargetPositionNodes3()
+        
+        if (nodeDirection.y is 1 or -1 && nodeDirection.x == 0)
         {
-            if (cornerSelect)
-            {
-                corridorPosition = new Vector2Int(-1, 0);
-                targetNodePosition -= corridorPosition;
-                
-                for (int i = 0; i < Mathf.Abs(targetNodePosition.x); i++)
-                {
-                    mainPathPosition.Add(new Vector2Int(-1,0));
-                }
-                    
-                mainPathPosition.Add(corridorPosition);
-                
-                for (int i = 0; i < targetNodePosition.y; i++)
-                {
-                    mainPathPosition.Add(new Vector2Int(0,1));
-                }
-            }
-            else
-            {
-                corridorPosition = new Vector2Int(0, 1);
-                targetNodePosition -= corridorPosition;
-                
-                for (int i = 0; i < targetNodePosition.y; i++)
-                {
-                    mainPathPosition.Add(new Vector2Int(0,1));
-                }
-                    
-                mainPathPosition.Add(corridorPosition);
-                    
-                for (int i = 0; i < Mathf.Abs(targetNodePosition.x); i++)
-                {
-                    mainPathPosition.Add(new Vector2Int(-1,0));
-                }
-            }
+            _yNodes.Add(yNode);
+            return yNode;
         }
-        void SetTargetPositionNodes4()
-        {
-            if (cornerSelect)
-            {
-                corridorPosition = new Vector2Int(-1, 0);
-                targetNodePosition -= corridorPosition;
-                
-                
-                for (int i = 0; i < Mathf.Abs(targetNodePosition.x); i++)
-                {
-                    mainPathPosition.Add(new Vector2Int(-1,0));
-                }
-                    
-                mainPathPosition.Add(corridorPosition);
-                
-                for (int i = 0; i < Mathf.Abs(targetNodePosition.y); i++)
-                {
-                    mainPathPosition.Add(new Vector2Int(0,-1));
-                }
-            }
-            else
-            {
-                corridorPosition = new Vector2Int(0, -1);
-                targetNodePosition -= corridorPosition;
-                
-                for (int i = 0; i < Mathf.Abs(targetNodePosition.y); i++)
-                {
-                    mainPathPosition.Add(new Vector2Int(0,-1));
-                }
-                    
-                mainPathPosition.Add(corridorPosition);
-                    
-                for (int i = 0; i < Mathf.Abs(targetNodePosition.x); i++)
-                {
-                    mainPathPosition.Add(new Vector2Int(-1,0));
-                }
-            }
-        }
+        
+        Debug.LogError("CenterNode has returned!");
+        return CenterNode;
     }
     
     

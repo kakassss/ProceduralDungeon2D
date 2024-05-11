@@ -10,7 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1059708678629029236, guid: 0f432afe98a2c8e4bbb908d3fcb47984, type: 3}
       propertyPath: m_Name
-      value: Dungeon_Node_LeftOpen
+      value: Dungeon_Node_Left_PartialOpen
+      objectReference: {fileID: 0}
+    - target: {fileID: 1591288467451839391, guid: 0f432afe98a2c8e4bbb908d3fcb47984, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.475
+      objectReference: {fileID: 0}
+    - target: {fileID: 2906347272679721221, guid: 0f432afe98a2c8e4bbb908d3fcb47984, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.475
       objectReference: {fileID: 0}
     - target: {fileID: 4396395258560724248, guid: 0f432afe98a2c8e4bbb908d3fcb47984, type: 3}
       propertyPath: m_LocalPosition.x
