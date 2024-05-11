@@ -156,15 +156,6 @@ public class DungeonNodeGenerator : MonoBehaviour
         
         CreateAndInstantiateCenter();
         
-        void CreateAndInstantiateCenter()
-        {
-            NodeData<CenterNodes> centerNode = GetNodeDataFromNode<CenterNodes>(_selectedNode, nextNodePos.x, nextNodePos.y);
-            centerNode.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(centerNode.node);
-                    
-            Instantiate(centerNode.node.NodeGameobject, new Vector3(centerNode.Position.x,centerNode.Position.y,0),
-                Quaternion.identity, transform);
-        }
-        
         // Assuming target vector be like (1,2) (-2,3) (-3,-5) (2,-4)
         if (targetNodePosition.x == 0 || targetNodePosition.y == 0) return;
         
@@ -326,6 +317,15 @@ public class DungeonNodeGenerator : MonoBehaviour
                     mainPathPosition.Add(new Vector2Int(yPosFalse,0));
                 }
             }
+        }
+        
+        void CreateAndInstantiateCenter()
+        {
+            NodeData<CenterNodes> centerNode = GetNodeDataFromNode<CenterNodes>(_selectedNode, nextNodePos.x, nextNodePos.y);
+            centerNode.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(centerNode.node);
+                    
+            Instantiate(centerNode.node.NodeGameobject, new Vector3(centerNode.Position.x,centerNode.Position.y,0),
+                Quaternion.identity, transform);
         }
         
     }
