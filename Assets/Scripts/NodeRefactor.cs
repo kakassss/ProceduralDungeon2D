@@ -50,45 +50,30 @@ public class NodeRefactor
         
         Debug.Log("------------------------------------------");
 
-        if (upNodeData != null && downNodeData != null && leftNodeData != null && rightNodeData != null)
+        if (upNodeData != null && downNodeData != null && leftNodeData != null && rightNodeData != null && DestroyGOList != null)
         {
-            if (DestroyGOList != null)
-            {
-                Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
-                return NodeDataProvider.CenterNode;
-            }
+            Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
+            return NodeDataProvider.CenterNode;
         }
-        if (downNodeData != null && leftNodeData != null && rightNodeData != null)
+        if (downNodeData != null && leftNodeData != null && rightNodeData != null && DestroyGOList != null)
         {
-            if (DestroyGOList != null)
-            {
-                Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
-                return NodeDataProvider.UpCloseNode;
-            }
+            Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
+            return NodeDataProvider.UpCloseNode;
         }
-        if (upNodeData != null && leftNodeData != null && rightNodeData != null)
+        if (upNodeData != null && leftNodeData != null && rightNodeData != null && DestroyGOList != null)
         {
-            if (DestroyGOList != null)
-            {
-                Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
-                return NodeDataProvider.DownCloseNode;
-            }
+            Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
+            return NodeDataProvider.DownCloseNode;
         }
-        if (upNodeData != null && downNodeData != null  && rightNodeData != null)
+        if (upNodeData != null && downNodeData != null  && rightNodeData != null && DestroyGOList != null)
         {
-            if (DestroyGOList != null)
-            {
-                Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
-                return NodeDataProvider.LeftCloseNode;
-            }
+            Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
+            return NodeDataProvider.LeftCloseNode;
         }
-        if (upNodeData != null && downNodeData != null && leftNodeData != null)
+        if (upNodeData != null && downNodeData != null && leftNodeData != null && DestroyGOList != null)
         {
-            if (DestroyGOList != null)
-            {
-                Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
-                return NodeDataProvider.RightCloseNode;
-            }
+            Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
+            return NodeDataProvider.RightCloseNode;
         }
 
         return currentNode.node; // Todo: refactor 
