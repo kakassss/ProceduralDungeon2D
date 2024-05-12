@@ -87,76 +87,16 @@ public class DungeonNodeGenerator : MonoBehaviour
         {
             SelectPointNodePosition();
         }
-        SetInstantiatedNodeDatas();
-    }
 
-    private void SetInstantiatedNodeDatas()
-    {
-        for (int i = 0; i < _allInstantiatedNodes.Count; i++)
+        NodeRefactor nodeRefactor = new NodeRefactor();
+        
+        nodeRefactor.SetInstantiatedNodeDatas(transform,this,nodeGameObjectDataProvider);
+        foreach (var destroyableNode in nodeRefactor.DestroyGOList)
         {
-            _allInstantiatedNodes[i].node = SetNodeAfterInstatiated(_allInstantiatedNodes[i],i);
-            _allInstantiatedNodes[i].node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(_allInstantiatedNodes[i].node);
-            var go = Instantiate(_allInstantiatedNodes[i].node.NodeGameobject, new Vector3(_allInstantiatedNodes[i].Position.x,_allInstantiatedNodes[i].Position.y,0),
-                Quaternion.identity, transform);
+            Destroy(destroyableNode);
         }
     }
     
-    private Node SetNodeAfterInstatiated(NodeData<Node> currentNode, int currentIndex)
-    {
-        var UpNodePos = currentNode.Position + Vector2Int.up;
-        var DownNodePos = currentNode.Position + Vector2Int.down;
-        var LeftNodePos = currentNode.Position + Vector2Int.left;
-        var RightNodePos = currentNode.Position + Vector2Int.right;
-        
-        Debug.Log("currentNode name " + currentNode.node);
-        Debug.Log("currentNode " + currentNode.Position);
-        Debug.Log("UpNodePos " + UpNodePos);
-        Debug.Log("DownNodePos " + DownNodePos);
-        Debug.Log("LeftNodePos " + LeftNodePos);
-        Debug.Log("RightNodePos " + RightNodePos);
-        
-        Debug.Log("------------------------------------------");
-        
-        var upNodeData = NodeHelperMethods.GetNodeAtXPosition(UpNodePos, _allInstantiatedNodes);
-        var downNodeData = NodeHelperMethods.GetNodeAtXPosition(DownNodePos, _allInstantiatedNodes);
-        var leftNodeData = NodeHelperMethods.GetNodeAtXPosition(LeftNodePos, _allInstantiatedNodes);
-        var rightNodeData = NodeHelperMethods.GetNodeAtXPosition(RightNodePos, _allInstantiatedNodes);
-        
-        Debug.Log("upNodeData " + upNodeData.IsUnityNull());
-        Debug.Log("downNodeData " + downNodeData.IsUnityNull());
-        Debug.Log("leftNodeData " + leftNodeData.IsUnityNull());
-        Debug.Log("rightNodeData " + rightNodeData.IsUnityNull());
-        
-        Debug.Log("------------------------------------------");
-
-        if (upNodeData != null && downNodeData != null && leftNodeData != null && rightNodeData != null)
-        {
-            Destroy(_allInstantiatedNodesGO[currentIndex]);
-            return CenterNode;
-        }
-        if (downNodeData != null && leftNodeData != null && rightNodeData != null)
-        {
-            Destroy(_allInstantiatedNodesGO[currentIndex]);
-            return UpCloseNode;
-        }
-        if (upNodeData != null && leftNodeData != null && rightNodeData != null)
-        {
-            Destroy(_allInstantiatedNodesGO[currentIndex]);
-            return DownCloseNode;
-        }
-        if (upNodeData != null && downNodeData != null  && rightNodeData != null)
-        {
-            Destroy(_allInstantiatedNodesGO[currentIndex]);
-            return LeftCloseNode;
-        }
-        if (upNodeData != null && downNodeData != null && leftNodeData != null)
-        {
-            Destroy(_allInstantiatedNodesGO[currentIndex]);
-            return RightCloseNode;
-        }
-
-        return currentNode.node; // Todo: refactor 
-    }
     private void GridDataConvertToList()
     {
         for (int i = -_halfOfWidth; i <= _halfOfWidth; i++)
@@ -175,8 +115,8 @@ public class DungeonNodeGenerator : MonoBehaviour
     private List<Node> _yNodes;
     private int _totalGridCount;
     
-    List<NodeData<Node>> _allInstantiatedNodes = new List<NodeData<Node>>();
-    List<GameObject> _allInstantiatedNodesGO = new List<GameObject>();
+    [HideInInspector] public List<NodeData<Node>> _allInstantiatedNodes = new List<NodeData<Node>>();
+    [HideInInspector] public List<GameObject> _allInstantiatedNodesGO = new List<GameObject>();
     
     private void SelectPointNodePosition()
     {
