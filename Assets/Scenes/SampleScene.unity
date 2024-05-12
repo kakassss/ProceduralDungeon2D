@@ -5570,11 +5570,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f0b6e8e367731c4b8ffbcc5bb40200d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _allInstantiatedNodesGO: []
   Width: 10
   Height: 10
   nodeGameObjectDataProvider: {fileID: 824377505}
   corridorNodeRate: 0.2
-  _iterationCount: 12
+  _iterationCount: 25
 --- !u!4 &1294367091 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3939791720615031058, guid: c8602fd2c5a94724ea4d67e3accd7a7d, type: 3}

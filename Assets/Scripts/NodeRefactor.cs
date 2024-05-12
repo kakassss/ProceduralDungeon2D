@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class NodeRefactor
 {
-    public List<GameObject> DestroyGOList;
+    public List<GameObject> DestroyGOList = new List<GameObject>();
+    
     
     public void SetInstantiatedNodeDatas(Transform transform,DungeonNodeGenerator _nodeGenerator,NodeGameObjectDataProvider nodeGameObjectDataProvider)
     {
         var nodeList = _nodeGenerator._allInstantiatedNodes;
+        
         for (int i = 0; i < _nodeGenerator._allInstantiatedNodes.Count; i++)
         {
             nodeList[i].node = SetNodeAfterInstatiated(_nodeGenerator._allInstantiatedNodes[i],i,_nodeGenerator);
@@ -20,7 +22,7 @@ public class NodeRefactor
     
     private Node SetNodeAfterInstatiated(NodeData<Node> currentNode, int currentIndex,DungeonNodeGenerator _nodeGenerator)
     {
-        DestroyGOList = new List<GameObject>();
+        
         
         var UpNodePos = currentNode.Position + Vector2Int.up;
         var DownNodePos = currentNode.Position + Vector2Int.down;
@@ -50,28 +52,43 @@ public class NodeRefactor
 
         if (upNodeData != null && downNodeData != null && leftNodeData != null && rightNodeData != null)
         {
-            Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
-            return NodeDataProvider.CenterNode;
+            if (DestroyGOList != null)
+            {
+                Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
+                return NodeDataProvider.CenterNode;
+            }
         }
         if (downNodeData != null && leftNodeData != null && rightNodeData != null)
         {
-            Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
-            return NodeDataProvider.UpCloseNode;
+            if (DestroyGOList != null)
+            {
+                Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
+                return NodeDataProvider.UpCloseNode;
+            }
         }
         if (upNodeData != null && leftNodeData != null && rightNodeData != null)
         {
-            Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
-            return NodeDataProvider.DownCloseNode;
+            if (DestroyGOList != null)
+            {
+                Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
+                return NodeDataProvider.DownCloseNode;
+            }
         }
         if (upNodeData != null && downNodeData != null  && rightNodeData != null)
         {
-            Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
-            return NodeDataProvider.LeftCloseNode;
+            if (DestroyGOList != null)
+            {
+                Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
+                return NodeDataProvider.LeftCloseNode;
+            }
         }
         if (upNodeData != null && downNodeData != null && leftNodeData != null)
         {
-            Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
-            return NodeDataProvider.RightCloseNode;
+            if (DestroyGOList != null)
+            {
+                Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
+                return NodeDataProvider.RightCloseNode;
+            }
         }
 
         return currentNode.node; // Todo: refactor 

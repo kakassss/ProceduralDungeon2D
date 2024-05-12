@@ -58,6 +58,7 @@ public class DungeonNodeGenerator : MonoBehaviour
 
     private void Awake()
     {
+        NodeRefactor nodeRefactor = new NodeRefactor();
         _halfOfWidth = Width / 2;
         _halfOfHeight = Height / 2;
         
@@ -75,13 +76,14 @@ public class DungeonNodeGenerator : MonoBehaviour
         }
 
         GridDataConvertToList();
+        InstantiateCenterNode();
         
         for (int i = 0; i < _iterationCount; i++)
         {
-            SelectPointNodePosition();
+            SetPositionPointNodeAndInstantiate();
         }
 
-        NodeRefactor nodeRefactor = new NodeRefactor();
+        
         
         nodeRefactor.SetInstantiatedNodeDatas(transform,this,nodeGameObjectDataProvider);
         foreach (var destroyableNode in nodeRefactor.DestroyGOList)
@@ -100,8 +102,19 @@ public class DungeonNodeGenerator : MonoBehaviour
             }
         }
     }
+
+    private void InstantiateCenterNode()
+    {
+        NodeData<Node> centerNode = GetNodeDataFromNode<Node>(NodeDataProvider.CenterNode, Vector2Int.zero.x, Vector2Int.zero.y);
+        centerNode.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(centerNode.node);
+                
+        var centerNodeGO = Instantiate(centerNode.node.NodeGameobject, new Vector3(centerNode.Position.x,centerNode.Position.y,0),
+            Quaternion.identity, transform);
+        _allInstantiatedNodes.Add(centerNode);
+        //_allInstantiatedNodesGO.Add(centerNodeGO);
+    }
     
-    private void SelectPointNodePosition()
+    private void SetPositionPointNodeAndInstantiate()
     {
         //var randomGridData = Random.Range(0, _gridDataList.Count);
         var minRandomGridData = Random.Range(0 ,34);   // These array groups has a bigger numbers except 
@@ -123,8 +136,6 @@ public class DungeonNodeGenerator : MonoBehaviour
         int corner = Random.Range(0,2);
         bool cornerSelect = corner == 0;
         
-        
-        CreateAndInstantiateCenter();
         
         // Assuming target vector be like (1,2) (-2,3) (-3,-5) (2,-4)
         if (targetNodePosition.x == 0 || targetNodePosition.y == 0) return;
@@ -293,14 +304,7 @@ public class DungeonNodeGenerator : MonoBehaviour
             }
         }
         
-        void CreateAndInstantiateCenter()
-        {
-            NodeData<CenterNodes> centerNode = GetNodeDataFromNode<CenterNodes>(_selectedNode, nextNodePos.x, nextNodePos.y);
-            centerNode.node.NodeGameobject = nodeGameObjectDataProvider.GetCurrentNodeGO(centerNode.node);
-                    
-            Instantiate(centerNode.node.NodeGameobject, new Vector3(centerNode.Position.x,centerNode.Position.y,0),
-                Quaternion.identity, transform);
-        }
+        
         
     }
     
