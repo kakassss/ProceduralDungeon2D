@@ -82,8 +82,6 @@ public class DungeonNodeGenerator : MonoBehaviour
         {
             SetPositionPointNodeAndInstantiate();
         }
-
-        
         
         nodeRefactor.SetInstantiatedNodeDatas(transform,this,nodeGameObjectDataProvider);
         foreach (var destroyableNode in nodeRefactor.DestroyGOList)
@@ -111,7 +109,7 @@ public class DungeonNodeGenerator : MonoBehaviour
         var centerNodeGO = Instantiate(centerNode.node.NodeGameobject, new Vector3(centerNode.Position.x,centerNode.Position.y,0),
             Quaternion.identity, transform);
         _allInstantiatedNodes.Add(centerNode);
-        //_allInstantiatedNodesGO.Add(centerNodeGO);
+        _allInstantiatedNodesGO.Add(centerNodeGO);
     }
     
     private void SetPositionPointNodeAndInstantiate()
