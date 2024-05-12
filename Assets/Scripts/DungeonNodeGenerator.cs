@@ -18,13 +18,17 @@ public class DungeonNodeGenerator : MonoBehaviour
     
     private readonly List<NodeData<Node>> _gridDataList = new List<NodeData<Node>>();
     private List<Vector2Int> _nodePositionsList;
+    private Vector2Int _currentPointPosition;
     
+    private NodeData<Node> _currentPointNodeData;
+    private Node _selectedNode;
     private Grid _gridData;
+    private List<Node> _xNodes;
+    private List<Node> _yNodes;
     
+    private int _totalGridCount;
     private int _halfOfWidth;
     private int _halfOfHeight;
-    
-    
     
     private readonly Type[] _allNodeTypes =
     {
@@ -96,15 +100,6 @@ public class DungeonNodeGenerator : MonoBehaviour
             }
         }
     }
-    
-    private Vector2Int _currentPointPosition;
-    private NodeData<Node> _currentPointNodeData;
-    private Node _selectedNode;
-    private List<Node> _xNodes;
-    private List<Node> _yNodes;
-    private int _totalGridCount;
-    
-    
     
     private void SelectPointNodePosition()
     {
