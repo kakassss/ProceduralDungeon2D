@@ -6,6 +6,9 @@ using Random = UnityEngine.Random;
 
 public class DungeonNodeGenerator : MonoBehaviour
 {
+    [HideInInspector] public List<NodeData<Node>> _allInstantiatedNodes = new List<NodeData<Node>>();
+    [HideInInspector] public List<GameObject> _allInstantiatedNodesGO = new List<GameObject>();
+    
     public int Width;
     public int Height;
     
@@ -21,21 +24,7 @@ public class DungeonNodeGenerator : MonoBehaviour
     private int _halfOfWidth;
     private int _halfOfHeight;
     
-    public Node CenterNode { get; private set; } = new CenterNodes();
-    public Node UpNode { get; private set; } = new UpNodes();
-    public Node DownNode { get; private set; } = new DownNodes();
-    public Node LeftNode { get; private set; } = new LeftNodes();
-    public Node RightNode { get; private set; } = new RightNodes();
-    public Node UpDownNode { get; private set; } = new UpDownNodes();
-    public Node UpRightNode { get; private set; } = new UpRightNodes();
-    public Node UpLeftNode { get; private set; } = new UpLeftNodes();
-    public Node DownLeftNode { get; private set; } = new DownLeftNodes();
-    public Node DownRightNode { get; private set; } = new DownRightNodes();
-    public Node RightLeftNode { get; private set; } = new RightLeftNodes();
-    public Node UpCloseNode { get; private set; } = new UpCloseNodes();
-    public Node DownCloseNode { get; private set; } = new DownCloseNodes();
-    public Node RightCloseNode { get; private set; } = new RightCloseNodes();
-    public Node LeftCloseNode { get; private set; } = new LeftCloseNodes();
+    
     
     private readonly Type[] _allNodeTypes =
     {
@@ -115,8 +104,7 @@ public class DungeonNodeGenerator : MonoBehaviour
     private List<Node> _yNodes;
     private int _totalGridCount;
     
-    [HideInInspector] public List<NodeData<Node>> _allInstantiatedNodes = new List<NodeData<Node>>();
-    [HideInInspector] public List<GameObject> _allInstantiatedNodesGO = new List<GameObject>();
+    
     
     private void SelectPointNodePosition()
     {
@@ -135,7 +123,7 @@ public class DungeonNodeGenerator : MonoBehaviour
         _yNodes = new List<Node>();
         Vector2Int corridorPosition;
 
-        _selectedNode = CenterNode;
+        _selectedNode = NodeDataProvider.CenterNode;
         var nextNodePos = startNodePosition;
         int corner = Random.Range(0,2);
         bool cornerSelect = corner == 0;
@@ -162,7 +150,8 @@ public class DungeonNodeGenerator : MonoBehaviour
             }
             
             //Get and set edgeNodes datas
-            SetEdgeNodesDatas(DownRightNode,LeftNode,UpNode,UpRightNode);
+            SetEdgeNodesDatas(NodeDataProvider.DownRightNode,NodeDataProvider.LeftNode,
+                NodeDataProvider.UpNode,NodeDataProvider.UpRightNode);
             
             //Instantiate NodeData Gameobjects
             foreach (var nodeData in pathNodes)
@@ -183,7 +172,8 @@ public class DungeonNodeGenerator : MonoBehaviour
             }
             
             //Get and set edgeNodes datas
-            SetEdgeNodesDatas(UpLeftNode,LeftNode,DownNode,DownRightNode);
+            SetEdgeNodesDatas(NodeDataProvider.UpLeftNode,NodeDataProvider.LeftNode,
+                NodeDataProvider.DownNode,NodeDataProvider.DownRightNode);
             
             //Instantiate NodeData Gameobjects
             foreach (var nodeData in pathNodes)
@@ -204,7 +194,8 @@ public class DungeonNodeGenerator : MonoBehaviour
             }
             
             //Get and set edgeNodes datas
-            SetEdgeNodesDatas(UpRightNode,RightNode,DownNode,DownLeftNode);
+            SetEdgeNodesDatas(NodeDataProvider.UpRightNode,NodeDataProvider.RightNode,
+                NodeDataProvider.DownNode,NodeDataProvider.DownLeftNode);
             
             //Instantiate NodeData Gameobjects
             foreach (var nodeData in pathNodes)
@@ -225,7 +216,7 @@ public class DungeonNodeGenerator : MonoBehaviour
             }
             
             //Get and set edgeNodes datas
-            SetEdgeNodesDatas(DownRightNode,RightNode,UpNode,UpLeftNode);
+            SetEdgeNodesDatas(NodeDataProvider.DownRightNode,NodeDataProvider.RightNode,NodeDataProvider.UpNode,NodeDataProvider.UpLeftNode);
             
             //Instantiate NodeData Gameobjects
             foreach (var nodeData in pathNodes)
@@ -245,7 +236,7 @@ public class DungeonNodeGenerator : MonoBehaviour
         void SetNodeData(int i)
         {
             nextNodePos += mainPathPosition[i];
-            _selectedNode = SetSelectedNodes(mainPathPosition[i],RightLeftNode,UpDownNode);
+            _selectedNode = SetSelectedNodes(mainPathPosition[i],NodeDataProvider.RightLeftNode,NodeDataProvider.UpDownNode);
             NodeData<Node> placableNode = GetNodeDataFromNode<Node>(_selectedNode, nextNodePos.x, nextNodePos.y);
             pathNodes.Add(placableNode);
             _allInstantiatedNodes.Add(placableNode);
@@ -333,7 +324,7 @@ public class DungeonNodeGenerator : MonoBehaviour
         }
         
         Debug.LogError("CenterNode has returned!");
-        return CenterNode;
+        return NodeDataProvider.CenterNode;
     }
     
     private NodeData<T> GetRandomNodeData<T>(int x,int y) where T: Node

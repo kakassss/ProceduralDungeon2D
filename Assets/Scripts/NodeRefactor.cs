@@ -51,27 +51,27 @@ public class NodeRefactor
         if (upNodeData != null && downNodeData != null && leftNodeData != null && rightNodeData != null)
         {
             Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
-            return _nodeGenerator.CenterNode;
+            return NodeDataProvider.CenterNode;
         }
         if (downNodeData != null && leftNodeData != null && rightNodeData != null)
         {
             Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
-            return _nodeGenerator.UpCloseNode;
+            return NodeDataProvider.UpCloseNode;
         }
         if (upNodeData != null && leftNodeData != null && rightNodeData != null)
         {
             Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
-            return _nodeGenerator.DownCloseNode;
+            return NodeDataProvider.DownCloseNode;
         }
         if (upNodeData != null && downNodeData != null  && rightNodeData != null)
         {
             Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
-            return _nodeGenerator.LeftCloseNode;
+            return NodeDataProvider.LeftCloseNode;
         }
         if (upNodeData != null && downNodeData != null && leftNodeData != null)
         {
             Destroy(_nodeGenerator._allInstantiatedNodesGO[currentIndex]);
-            return _nodeGenerator.RightCloseNode;
+            return NodeDataProvider.RightCloseNode;
         }
 
         return currentNode.node; // Todo: refactor 
