@@ -83,12 +83,6 @@ public class LeftNodes : Node
     }
 }
 
-//Old data type
-// [Serializable] public class UpNodes : Node { public UpNodes() { Direction = new Vector2Int(0, 1); } }
-// [Serializable] public class DownNodes : Node { public DownNodes() { Direction = new Vector2Int(0,-1); } }
-// [Serializable] public class RightNodes : Node { public RightNodes() { Direction = new Vector2Int(1,0); } }
-// [Serializable] public class LeftNodes : Node { public LeftNodes() { Direction = new Vector2Int(-1,0); } }
-
 //--------------------------------------------Corridors-------------------------------------------
 
 

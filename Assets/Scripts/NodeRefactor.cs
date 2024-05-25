@@ -25,26 +25,11 @@ public class NodeRefactor
         var LeftNodePos = currentNode.Position + Vector2Int.left;
         var RightNodePos = currentNode.Position + Vector2Int.right;
         
-        // Debug.Log("currentNode name " + currentNode.node);
-        // Debug.Log("currentNode " + currentNode.Position);
-        // Debug.Log("UpNodePos " + UpNodePos);
-        // Debug.Log("DownNodePos " + DownNodePos);
-        // Debug.Log("LeftNodePos " + LeftNodePos);
-        // Debug.Log("RightNodePos " + RightNodePos);
-        //
-        // Debug.Log("------------------------------------------");
-        
         var upNodeData = NodeHelperMethods.GetNodeAtXPosition(UpNodePos, _nodeGenerator._allInstantiatedNodes);
         var downNodeData = NodeHelperMethods.GetNodeAtXPosition(DownNodePos, _nodeGenerator._allInstantiatedNodes);
         var leftNodeData = NodeHelperMethods.GetNodeAtXPosition(LeftNodePos, _nodeGenerator._allInstantiatedNodes);
         var rightNodeData = NodeHelperMethods.GetNodeAtXPosition(RightNodePos, _nodeGenerator._allInstantiatedNodes);
         
-        // Debug.Log("upNodeData " + upNodeData.IsUnityNull());
-        // Debug.Log("downNodeData " + downNodeData.IsUnityNull());
-        // Debug.Log("leftNodeData " + leftNodeData.IsUnityNull());
-        // Debug.Log("rightNodeData " + rightNodeData.IsUnityNull());
-        //
-        // Debug.Log("------------------------------------------");
 
         if (upNodeData != null && downNodeData != null && leftNodeData != null && rightNodeData != null && DestroyGOList != null)
         {
